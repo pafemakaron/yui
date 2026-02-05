@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>看護関係法規てすと</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin: 12px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 3px dashed #667eea;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 100%;
+            max-width: 300px;
+            min-height: 52px; /* タップしやすい高さ */
+        }
+
+        .score-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.6);
+        }
+
+        .score-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            display: none;
+            animation: bounce 0.6s ease;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        /* iPhone用の最適化 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .question-title {
+                font-size: 0.88em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 看護関係法規てすと 🌸</h1>
+        <p class="subtitle">全<span id="totalQuestions"></span>問! ゆいちゃがんばって♪</p>
+        
+        <div id="questionsContainer"></div>
+
+        <!-- 採点セクション -->
+        <div class="score-section">
+            <button class="score-btn" onclick="quiz.calculateScore()"> 採点する </button>
+            <div class="score-result" id="scoreResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // クイズクラス
+        class Quiz {
+            constructor(questions) {
+                this.questions = questions;
+                this.correctMessages = [
+                    '正解です! すばらしい! 🎉',
+                    '大正解! やったね! ✨',
+                    'パーフェクト! 💯',
+                    '素晴らしい! その調子! 🌟',
+                    '正解! よくできました! 👏'
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                this.renderQuestions();
+            }
+
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+
+                this.questions.forEach((question, index) => {
+                    const questionBox = this.createQuestionBox(question, index);
+                    container.appendChild(questionBox);
+                });
+            }
+
+            createQuestionBox(question, index) {
+                const questionNum = index + 1;
+                const box = document.createElement('div');
+                box.className = 'question-box';
+
+                box.innerHTML = `
+                    <div class="question-title">
+                        問${questionNum}. ${question.text}
+                    </div>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <label class="option">
+                                <input type="checkbox" name="q${questionNum}" value="${i + 1}">
+                                ${i + 1}. ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-btn" onclick="quiz.checkAnswer(${questionNum})">確認する ✓</button>
+                    <div class="result" id="result${questionNum}"></div>
+                `;
+
+                return box;
+            }
+
+            checkAnswer(questionNum) {
+                const question = this.questions[questionNum - 1];
+                const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                const resultDiv = document.getElementById(`result${questionNum}`);
+                
+                if (selectedInputs.length === 0) {
+                    alert('選択肢を選んでください 💭');
+                    return;
+                }
+
+                // ユーザーが選択した回答を配列で取得
+                const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                // 正解を配列に変換（単一回答の場合も配列として扱う）
+                const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                
+                const randomMessage = this.correctMessages[Math.floor(Math.random() * this.correctMessages.length)];
+
+                // 配列同士を比較
+                const isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers);
+
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = `<span class="emoji">✓</span> ${randomMessage}<br>正解: ${correctAnswers.join(', ')}`;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = `<span class="emoji">✗</span> 残念! 不正解です 😢<br>あなたの回答: ${userAnswers.join(', ')}<br>正解: ${correctAnswers.join(', ')}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+
+            calculateScore() {
+                let score = 0;
+                let answered = 0;
+
+                this.questions.forEach((question, index) => {
+                    const questionNum = index + 1;
+                    const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                    
+                    if (selectedInputs.length > 0) {
+                        answered++;
+                        
+                        // ユーザーが選択した回答を配列で取得
+                        const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                        // 正解を配列に変換
+                        const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                        
+                        // 配列同士を比較
+                        if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+                            score++;
+                        }
+                    }
+                });
+
+                if (answered < this.questions.length) {
+                    alert('すべての問題に回答してください 📝');
+                    return;
+                }
+
+                this.displayScore(score);
+            }
+
+            displayScore(score) {
+                const scoreResultDiv = document.getElementById('scoreResult');
+                const total = this.questions.length;
+                const percentage = (score / total) * 100;
+                
+                let message = '';
+                let emoji = '';
+
+                if (percentage === 100) {
+                    message = 'パーフェクト!';
+                    emoji = '🎊🎉🏆';
+                } else if (percentage >= 80) {
+                    message = 'すごい!';
+                    emoji = '🌟✨';
+                } else if (percentage >= 60) {
+                    message = 'よくできました!';
+                    emoji = '👏💐';
+                } else if (percentage >= 40) {
+                    message = 'もう少し!';
+                    emoji = '💪📚';
+                } else {
+                    message = '次はがんばろう!';
+                    emoji = '🌱🌈';
+                }
+
+                scoreResultDiv.innerHTML = `${emoji}<br>${message}<br>あなたの得点: ${score} / ${total}点`;
+                scoreResultDiv.style.display = 'block';
+
+                scoreResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // 問題データ（ここに問題を追加するだけでOK）
+        const questionsData = [
+            {
+                text: '日本国憲法（1946年11月公布）の前文にうたわれているのはどれか。',
+                options: [
+                    '基本的人権の尊重',
+                    '国家の主権は天皇に存する',
+                    '自国のことのみに専念する責務',
+                    '戦争に参戦する国家としての義務'
+                ],
+                answer: 1
+            },
+            {
+                text: '日本国憲法第25条に規定されている事項で正しいのはどれか。',
+                options: [
+                    '戦争の放棄',
+                    '国民の基本的人権の保障',
+                    '国民の幸福追求権の保障',
+                    '国の責務としての社会福祉、社会保障、公衆衛生の向上と増進'
+                ],
+                answer: 4
+            },
+            {
+                text: '医療法について正しいのはどれか。',
+                options: [
+                    '医療計画には地域の医療費削減方策を含む',
+                    '療養病床は介護老人福祉施設にある病床である',
+                    '都道府県は医療安全支援センターの設置に努める',
+                    '二次医療圏は原則として都道府県ごとに1圏域である'
+                ],
+                answer: 3
+            },
+            {
+                text: '医療法において、病院とは何人以上の患者を入院させる施設を有するものと規定されているか。',
+                options: ['10', '20', '50', '100'],
+                answer: 2
+            },
+            {
+                text: '医療法で「地域の医療従事者の資質の向上を図るための研修を行わせる能力を有すること」と定められているのはどれか。',
+                options: ['助産所', '診療所', '特定機能病院', '地域医療支援病院'],
+                answer: 4
+            },
+            {
+                text: '保健師助産師看護師法に基づく看護師免許の付与における欠格事由はどれか。',
+                options: [
+                    '20歳未満の者',
+                    '素行が著しく不良である者',
+                    '伝染性の疾病にかかっている者',
+                    '麻薬、大麻またはあへんの中毒者'
+                ],
+                answer: 4
+            },
+            {
+                text: '看護師の行為で適切なのはどれか。',
+                options: [
+                    '診療録を自宅へ持ち帰った',
+                    '修正液で記録を修正した',
+                    '患者の友人に答えられないと説明した',
+                    '氏名入り資料を院外研修で配布した'
+                ],
+                answer: 3
+            },
+            {
+                text: '医師の指示を受けて看護師が行うことができる業務はどれか。',
+                options: ['薬剤の処方', '死亡の確認', '静脈内注射', '診断書の交付'],
+                answer: 3
+            },
+            {
+                text: '医師の指示がある場合でも看護師に禁止されている業務はどれか。',
+                options: [
+                    '静脈内注射',
+                    '診断書の交付',
+                    '末梢静脈路の確保',
+                    '人工呼吸器の設定変更'
+                ],
+                answer: 2
+            },
+            {
+                text: '看護師の業務従事者届の届出の間隔として規定されているのはどれか。',
+                options: ['1年', '2年', '5年', '10年'],
+                answer: 2
+            },
+            {
+                text: '都道府県が医療計画に記載すべき事項はどれか。',
+                options: [
+                    '地域生活支援事業',
+                    '健康増進の達成目標',
+                    '介護サービス情報の公表',
+                    '医療従事者の確保'
+                ],
+                answer: 4
+            },
+            {
+                text: '医療法に規定されている病床はどれか。',
+                options: [
+                    '地域包括ケア病床',
+                    '周産期病床',
+                    '認知症病床',
+                    '療養病床'
+                ],
+                answer: 4
+            },
+            {
+                text: '医療安全対策で最も重要なのはどれか。',
+                options: [
+                    '患者からの苦情',
+                    '医療者間の相互監視',
+                    '組織として取り組む体制',
+                    '医療者個人への意識付け'
+                ],
+                answer: 3
+            },
+            {
+                text: 'インシデントレポートについて正しいのはどれか。',
+                options: [
+                    '警察への届出義務がある',
+                    '法令で書式が統一されている',
+                    '事故発生まで報告しない',
+                    '異なる職種間で共有する'
+                ],
+                answer: 4
+            },
+            {
+                text: '医療過誤について正しいのはどれか。',
+                options: [
+                    '医療行為に関連した悪い結果すべて',
+                    '悪い結果を予測していた場合',
+                    '注意していたが死亡した場合',
+                    '注意義務を怠り損害が生じた場合'
+                ],
+                answer: 4
+            },
+            {
+                text: '保健師助産師看護師法に規定されている看護師の義務はどれか。',
+                options: ['記録の保管', '秘密の保持', '勤務時間の報告', '関係機関との連携'],
+                answer: 2
+            },
+            {
+                text: '新たに業務に従事する看護師に対する臨床研修の努力義務が規定されているのはどれか。',
+                options: [
+                    '医療法',
+                    '学校教育法',
+                    '看護師等の人材確保の促進に関する法律',
+                    '養成所指定規則'
+                ],
+                answer: 3
+            },
+            {
+                text: '医療計画に定める5疾病はどれか。',
+                options: ['糖尿病', '認知症', '誤嚥性肺炎', '慢性閉塞性肺疾患'],
+                answer: 1
+            },
+            {
+                text: '看護師が医療過誤を起こした場合の法的責任で正しいのはどれか。',
+                options: [
+                    '罰金以上で行政処分の対象',
+                    '必ず業務停止処分',
+                    '民事責任として刑事罰',
+                    '施設のみが責任を負う'
+                ],
+                answer: 1
+            },
+            {
+                text: '死の三徴候として観察するのはどれか。',
+                options: ['腹壁反射', '輻輳反射', '対光反射', '深部腱反射'],
+                answer: 3
+            },
+            {
+                text: '医療法で医療機関に義務付けられているのはどれか。',
+                options: [
+                    '医療安全管理者の配置',
+                    '厚生労働省へのインシデント報告',
+                    '患者家族への安全指導',
+                    '医療安全支援センターへの報告'
+                ],
+                answer: 1
+            },
+            {
+                text: '医療法施行規則で規定されているのはどれか。',
+                options: ['病室の室温', '病室の照度', 'ベッドの高さ', '1床あたりの床面積'],
+                answer: 4
+            },
+            {
+                text: '医療職や介護職の業務で法律に規定されているのはどれか。',
+                options: [
+                    '介護福祉士は訪問看護ができる',
+                    '薬剤師は薬を処方できる',
+                    '臨床検査技師は肘静脈から採血できる',
+                    '看護師は必ず管理者になれる'
+                ],
+                answer: 3
+            },
+            {
+                text: '看護師の人員配置基準を定めている法律はどれか。',
+                options: [
+                    '医療法',
+                    '労働基準法',
+                    '保健師助産師看護師法',
+                    '人材確保促進法'
+                ],
+                answer: 1
+            },
+            {
+                text: '労働基準法で使用者が行うこととされているのはどれか。',
+                options: [
+                    '失業認定',
+                    '雇用保険給付',
+                    '労働条件の明示',
+                    '通勤災害保険給付'
+                ],
+                answer: 3
+            },
+            {
+                text: '職業病や労働災害防止を目的とする法律はどれか。',
+                options: [
+                    '労働組合法',
+                    '労働基準法',
+                    '労働安全衛生法',
+                    '労働関係調整法'
+                ],
+                answer: 3
+            },
+            {
+                text: '臓器提供が可能となる正しい組合せはどれか。',
+                options: [
+                    '本人同意あり・家族不同意',
+                    '本人不同意・家族同意',
+                    '本人不同意・家族同意',
+                    '本人不同意・家族不明'
+                ],
+                answer: 3
+            },
+            {
+                text: '看護師が能力発揮に努める努力義務を定めている法律はどれか。',
+                options: [
+                    '医療法',
+                    '労働契約法',
+                    '教育基本法',
+                    '看護師等の人材確保の促進に関する法律'
+                ],
+                answer: 4
+            },
+            {
+                text: '介護福祉士が一定条件で行える医療行為はどれか。',
+                options: ['摘便', '血糖測定', '喀痰吸引', 'インスリン注射'],
+                answer: 3
+            },
+            {
+                text: '労働基準法で規定されているのはどれか。',
+                options: ['労働時間', '時差出勤', '育児休業', '健康診断'],
+                answer: 1
+            },
+            {
+                text: '診療情報を第三者に開示する際に正しいのはどれか。',
+                options: [
+                    '死亡者情報は対象外',
+                    '利用目的の特定不要',
+                    '特定機能病院は同意不要',
+                    '法令に基づく届出は同意不要'
+                ],
+                answer: 4
+            },
+            {
+                text: 'ストレスチェック制度について正しいのはどれか。2つ選べ。',
+                options: [
+                    '労働安全衛生法に基づく',
+                    '労働者に受検義務がある',
+                    '高ストレスで就業制限',
+                    '50人以上事業場で義務',
+                    '身体的負担の検査'
+                ],
+                answer: [1,4]
+            },
+            {
+                text: '個人情報取扱いで本人同意として適切なのはどれか。',
+                options: [
+                    '友人のメール',
+                    '知人の代筆',
+                    '本人のチェック',
+                    '家族の口頭'
+                ],
+                answer: 3
+            },
+            {
+                text: '改正医療法で医療計画に位置付ける事項はどれか。',
+                options: ['4疾病-4事業', '5疾病-4事業', '5疾病-5事業', '5疾病-6事業'],
+                answer: 4
+            },
+            {
+                text: '令和3年改正医療法で新たに位置付けられた事業はどれか。',
+                options: [
+                    '新興感染症医療',
+                    '慢性腎疾患医療',
+                    '精神疾患医療',
+                    '在宅医療'
+                ],
+                answer: 1
+            },
+            {
+                text: '看護師免許の取消しを規定している法律はどれか。',
+                options: ['刑法', '医療法', '保健師助産師看護師法', '人材確保促進法'],
+                answer: 3
+            },
+            {
+                text: '医療事故について正しいのはどれか。',
+                options: [
+                    'すべての事故',
+                    '死亡・死産すべて',
+                    '訴えられたもの',
+                    '管理者が予期しなかった死亡・死産'
+                ],
+                answer: 4
+            },
+            {
+                text: '行政処分について適切なのはどれか。',
+                options: [
+                    '医道審議会で審議',
+                    '過誤のみ対象',
+                    '再免許不可',
+                    '再免許容易'
+                ],
+                answer: 1
+            },
+            {
+                text: '脳死下臓器提供が可能となる年齢はどれか。',
+                options: ['1歳', '6歳', '15歳', '18歳', '年齢制限なし'],
+                answer: 5
+            },
+            {
+                text: '看護師免許の取消しを規定するのはどれか。',
+                options: ['刑法', '医療法', '保健師助産師看護師法', '人材確保促進法'],
+                answer: 3
+            }
+        ];
+
+        // クイズの初期化
+        const quiz = new Quiz(questionsData);
+    </script>
+</body>
+</html>
