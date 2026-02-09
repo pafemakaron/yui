@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学てすと</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin: 12px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 3px dashed #667eea;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 100%;
+            max-width: 300px;
+            min-height: 52px; /* タップしやすい高さ */
+        }
+
+        .score-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.6);
+        }
+
+        .score-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            display: none;
+            animation: bounce 0.6s ease;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        /* iPhone用の最適化 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .question-title {
+                font-size: 0.88em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 薬理学てすと 🌸</h1>
+        <p class="subtitle">全<span id="totalQuestions"></span>問! ゆいちゃがんばって♪</p>
+        
+        <div id="questionsContainer"></div>
+
+        <!-- 採点セクション -->
+        <div class="score-section">
+            <button class="score-btn" onclick="quiz.calculateScore()"> 採点する </button>
+            <div class="score-result" id="scoreResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // クイズクラス
+        class Quiz {
+            constructor(questions) {
+                this.questions = questions;
+                this.correctMessages = [
+                    '正解です! すばらしい! 🎉',
+                    '大正解! やったね! ✨',
+                    'パーフェクト! 💯',
+                    '素晴らしい! その調子! 🌟',
+                    '正解! よくできました! 👏'
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                this.renderQuestions();
+            }
+
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+
+                this.questions.forEach((question, index) => {
+                    const questionBox = this.createQuestionBox(question, index);
+                    container.appendChild(questionBox);
+                });
+            }
+
+            createQuestionBox(question, index) {
+                const questionNum = index + 1;
+                const box = document.createElement('div');
+                box.className = 'question-box';
+
+                box.innerHTML = `
+                    <div class="question-title">
+                        問${questionNum}. ${question.text}
+                    </div>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <label class="option">
+                                <input type="checkbox" name="q${questionNum}" value="${i + 1}">
+                                ${i + 1}. ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-btn" onclick="quiz.checkAnswer(${questionNum})">確認する ✓</button>
+                    <div class="result" id="result${questionNum}"></div>
+                `;
+
+                return box;
+            }
+
+            checkAnswer(questionNum) {
+                const question = this.questions[questionNum - 1];
+                const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                const resultDiv = document.getElementById(`result${questionNum}`);
+                
+                if (selectedInputs.length === 0) {
+                    alert('選択肢を選んでください 💭');
+                    return;
+                }
+
+                // ユーザーが選択した回答を配列で取得
+                const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                // 正解を配列に変換（単一回答の場合も配列として扱う）
+                const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                
+                const randomMessage = this.correctMessages[Math.floor(Math.random() * this.correctMessages.length)];
+
+                // 配列同士を比較
+                const isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers);
+
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = `<span class="emoji">✓</span> ${randomMessage}<br>正解: ${correctAnswers.join(', ')}`;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = `<span class="emoji">✗</span> 残念! 不正解です 😢<br>あなたの回答: ${userAnswers.join(', ')}<br>正解: ${correctAnswers.join(', ')}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+
+            calculateScore() {
+                let score = 0;
+                let answered = 0;
+
+                this.questions.forEach((question, index) => {
+                    const questionNum = index + 1;
+                    const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                    
+                    if (selectedInputs.length > 0) {
+                        answered++;
+                        
+                        // ユーザーが選択した回答を配列で取得
+                        const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                        // 正解を配列に変換
+                        const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                        
+                        // 配列同士を比較
+                        if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+                            score++;
+                        }
+                    }
+                });
+
+                if (answered < this.questions.length) {
+                    alert('すべての問題に回答してください 📝');
+                    return;
+                }
+
+                this.displayScore(score);
+            }
+
+            displayScore(score) {
+                const scoreResultDiv = document.getElementById('scoreResult');
+                const total = this.questions.length;
+                const percentage = (score / total) * 100;
+                
+                let message = '';
+                let emoji = '';
+
+                if (percentage === 100) {
+                    message = 'パーフェクト!';
+                    emoji = '🎊🎉🏆';
+                } else if (percentage >= 80) {
+                    message = 'すごい!';
+                    emoji = '🌟✨';
+                } else if (percentage >= 60) {
+                    message = 'よくできました!';
+                    emoji = '👏💐';
+                } else if (percentage >= 40) {
+                    message = 'もう少し!';
+                    emoji = '💪📚';
+                } else {
+                    message = '次はがんばろう!';
+                    emoji = '🌱🌈';
+                }
+
+                scoreResultDiv.innerHTML = `${emoji}<br>${message}<br>あなたの得点: ${score} / ${total}点`;
+                scoreResultDiv.style.display = 'block';
+
+                scoreResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // 問題データ（ここに問題を追加するだけでOK）
+        const questionsData = [
+            {
+                text: '・ジギタリスの副作用（有害事象）はどれか （第107回、2018年）',
+                options: [
+                    '難聴',
+                    '悪心',
+                    '易感染',
+                    '低血糖'
+                ],
+                answer: 2
+            },
+            {
+                text: '・ジギタリス中毒の症状はどれか （第97回、2008年）',
+                options: [
+                    '脱毛',
+                    '難聴',
+                    '不整脈',
+                    '呼吸抑制'
+                ],
+                answer: 3
+            },
+            {
+                text: '・左心室の収縮力を抑制するのはどれか （第103回、2014年）',
+                options: [
+                    'アンジオテンシンⅡ受容体拮抗薬',
+                    'β遮断薬',
+                    '硝酸薬',
+                    '利尿薬'
+                ],
+                answer: 2
+            },
+            {
+                text: '鉄欠乏性貧血の症状または所見として考えられるのはどれか。2つ選べ （第102回、2013年）',
+                options: [
+                    '動悸',
+                    '匙状爪',
+                    'ほてり感',
+                    '運動失調',
+                    '皮膚の紅潮'
+                ],
+                answer: [1, 2]
+            },
+            {
+                text: '悪性貧血で正しいのはどれか。2つ選べ。 （第110回、2021年）',
+                options: [
+                    '貧血のうち90%以上を占める。',
+                    '異食症が出現する。',
+                    '小球性の貧血である。',
+                    '胃癌の発症率が高い。',
+                    '自己免疫機序で発症する。'
+                ],
+                answer: [4, 5]
+            },
+            {
+                text: '不足すると貧血になるのはどれか。 （第96回、2007年）',
+                options: [
+                    'ビタミンA',
+                    'ビタミンB12',
+                    'ビタミンD',
+                    'ビタミンE'
+                ],
+                answer: 2
+            },
+            {
+                text: '貧血を伴う患者の爪の写真を別に示す。欠乏している栄養素はどれか。 （第109回、2020年）',
+                options: [
+                    'ビタミンB12',
+                    'ビタミンC',
+                    '葉酸',
+                    '鉄'
+                ],
+                answer: 4
+            },
+            {
+                text: '白血球減少症で正しいのはどれか。2つ選べ。 （第104回、2015年）',
+                options: [
+                    '好塩基球数は増加する。',
+                    'EBウイルス感染によって起こる。',
+                    '白血球数が3,000/μL以下をいう。',
+                    '好中球減少症では細菌に感染しやすくなる。',
+                    '無顆粒球症は単球がなくなった病態をいう。'
+                ],
+                answer: [3, 4]
+            },
+            {
+                text: '生体内で生じた血栓を溶解するのはどれか。 （第95回、2006年）',
+                options: [
+                    'トロンボプラスチン',
+                    'カルシウムイオン',
+                    'プラスミン',
+                    'トロンビン'
+                ],
+                answer: 3
+            },
+            {
+                text: '抗血小板作用と抗炎症作用があるのはどれか。 （第103回、2014年）',
+                options: [
+                    'ヘパリン',
+                    'アルブミン',
+                    'アスピリン',
+                    'ワルファリン'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗癌薬の副作用（有害事象）である骨髄抑制を示しているのはどれか。 （104回）',
+                options: [
+                    '嘔吐',
+                    '下痢',
+                    '神経障害',
+                    '白血球減少'
+                ],
+                answer: 4
+            },
+            {
+                text: '・長期投与すると骨粗鬆症を発症するリスクが高まるのはどれか （第101回、2012年）',
+                options: [
+                    'ビタミンD',
+                    'ビタミンK',
+                    'エストロゲン',
+                    'ワルファリン',
+                    '副腎皮質ステロイド'
+                ],
+                answer: 5
+            },
+            {
+                text: '・高尿酸血症で正しいのはどれか （第111回、2022年）',
+                options: [
+                    '痛風結節は疼痛を伴う',
+                    '痛風発作は飲酒で誘発される',
+                    '痛風による関節炎の急性期に尿酸降下薬を投与する',
+                    '血清尿酸値9.0mg/dL以下を目標にコントロールする'
+                ],
+                answer: 2
+            },
+            {
+                text: '・最終代謝産物に尿酸が含まれるのはどれか （第109回、2020年）',
+                options: [
+                    '核酸',
+                    'リン脂質',
+                    '中性脂肪',
+                    'グルコース',
+                    'コレステロール'
+                ],
+                answer: 1
+            },
+            {
+                text: '・痛風の患者が摂取量を減らすことが望ましい食品はどれか （第113回、2024年）',
+                options: [
+                    '鶏卵',
+                    'チーズ',
+                    '鶏レバー',
+                    'じゃがいも'
+                ],
+                answer: 3
+            },
+            {
+                text: '・関節リウマチで正しいのはどれか （第96回、2007年）',
+                options: [
+                    '関節滑膜から病変が始まる。',
+                    '片側から出現し反対側に及ぶ',
+                    '膝関節で起こるとO脚になる',
+                    '運動すると関節のこわばりが出現する'
+                ],
+                answer: 1
+            },
+            {
+                text: '鉄の摂取不足によって起こるのはどれか。 （96回、2007年）',
+                options: [
+                    '酸素運搬量が減少する。',
+                    '赤血球の寿命が短縮する。',
+                    '核酸の合成酵素が不足する。',
+                    '白血球の分化が抑制される。'
+                ],
+                answer: 1
+            },
+            {
+                text: '貧血の診断に用いられるのはどれか。 （第100回、2011年）',
+                options: [
+                    'ヘモグロビン濃度',
+                    '収縮期血圧',
+                    '血糖値',
+                    '尿酸値'
+                ],
+                answer: 1
+            },
+            {
+                text: 'エリスロポエチンの産生が高まるのはどれか。 （第97回、2008年）',
+                options: [
+                    '血圧の低下',
+                    '血糖値の低下',
+                    '腎機能の低下',
+                    '動脈血酸素分圧の低下'
+                ],
+                answer: 4
+            },
+            {
+                text: '貧血で正しいのはどれか。 （99回、2010年）',
+                options: [
+                    '再生不良性貧血では易感染性がみられる。',
+                    '溶血性貧血では直接ビリルビンが増加する。',
+                    '鉄欠乏性貧血では血清フェリチンが増加する。',
+                    '悪性貧血では通常赤血球以外の血球系は保たれる。'
+                ],
+                answer: 1
+            },
+            {
+                text: 'ループ利尿薬について正しいのはどれか。 （第110回、2021年）',
+                options: [
+                    '作用発現が速い。',
+                    '眠前の服用が望ましい。',
+                    '抗不整脈薬として用いられる。',
+                    '副作用〈有害事象〉に高カリウム血症がある。'
+                ],
+                answer: 1
+            },
+            {
+                text: 'ループ系利尿薬とジギタリス製剤を服用している。 最も注意すべき血液検査項目はどれか。 （第95回、2006年）',
+                options: [
+                    'カリウム値',
+                    'カルシウム値',
+                    'ビリルビン値',
+                    'クレアチニン値'
+                ],
+                answer: 1
+            },
+            {
+                text: '降圧利尿薬により血中濃度が低下するのはどれか。 （第103回、2014年）',
+                options: [
+                    'ナトリウム',
+                    '中性脂肪',
+                    '尿 酸',
+                    '血 糖'
+                ],
+                answer: 1
+            },
+            {
+                text: '・降圧薬の作用機序で正しいのはどれか。 （第91回、2002年） a. アンジオテンシン変換酵素阻害薬 ― 昇圧物質合成阻害 b. 利尿薬 ― 循環血漿量減少 c. β受容体遮断薬 ― 末梢血管拡張 d. カルシウム拮抗薬 ― 心拍出量減少',
+                options: [
+                    'a, b',
+                    'a, d',
+                    'b, c',
+                    'c, d'
+                ],
+                answer: 1
+            },
+            {
+                text: '・血圧を上昇させるのはどれか。2つ選べ。 （第110回、2021年）',
+                options: [
+                    'セロトニン',
+                    'ヒスタミン',
+                    'バソプレシン',
+                    'ブラジキニン',
+                    '心房性ナトリウム利尿ペプチド'
+                ],
+                answer: [1, 3]
+            },
+            {
+                text: '・シクロホスファミドを投与している患者で注意が必要なのはどれか。 （112回）',
+                options: [
+                    '緑内障',
+                    '間質性肺炎',
+                    '歯肉の肥厚',
+                    '出血性膀胱炎'
+                ],
+                answer: 4
+            },
+            {
+                text: '・癌性疼痛で硫酸モルヒネ徐放錠を1日2回（9時、21時）内服している患者が19時に痛みを訴えた。この時の対応で最も適切なのはどれか （第98回、2009年）',
+                options: [
+                    '睡眠導入薬の内服',
+                    '塩酸モルヒネ水の内服',
+                    'ペンタゾシンの筋肉内注射',
+                    '21時の硫酸モルヒネ徐放錠を早めに内服'
+                ],
+                answer: 2
+            },
+            {
+                text: '・嘔気・嘔吐が強く出現する抗悪性腫瘍薬はどれか。',
+                options: [
+                    'シスプラチン',
+                    'ブスルファン',
+                    'ブレオマイシン',
+                    'ビンクリスチン'
+                ],
+                answer: 1
+            },
+            {
+                text: '・抗癌薬による骨髄機能抑制症状はどれか。 （101回）',
+                options: [
+                    '嘔吐',
+                    '脱毛',
+                    '下痢',
+                    '歯肉出血'
+                ],
+                answer: 4
+            },
+            {
+                text: '・骨髄抑制が出現するのはどれか。 （96回）',
+                options: [
+                    '麻薬',
+                    '利尿薬',
+                    '抗癌薬',
+                    'インスリン製剤'
+                ],
+                answer: 3
+            },
+            {
+                text: '・非小細胞肺癌で化学療法を初めて受けた患者。治療開始10日目の血液データは赤血球300万/μL、Hb11.8g/dL、白血球1,000/μL、血小板12万/μL、クレアチニン1.0mg/dLであった。この時期に最も注意して観察するのはどれか。 （98回）',
+                options: [
+                    '色素沈着',
+                    '尿量減少',
+                    '感染徴候',
+                    '脱毛'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗癌薬の有害な作用で起こりやすいのはどれか。 （103回）',
+                options: [
+                    '嘔吐',
+                    '失禁',
+                    '高血糖',
+                    '光線過敏'
+                ],
+                answer: 1
+            }
+        ];
+
+        // クイズの初期化
+        const quiz = new Quiz(questionsData);
+    </script>
+</body>
+</html>

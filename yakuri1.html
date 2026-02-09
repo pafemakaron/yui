@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学てすと</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin: 12px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 3px dashed #667eea;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 100%;
+            max-width: 300px;
+            min-height: 52px; /* タップしやすい高さ */
+        }
+
+        .score-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.6);
+        }
+
+        .score-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            display: none;
+            animation: bounce 0.6s ease;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        /* iPhone用の最適化 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .question-title {
+                font-size: 0.88em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 薬理学てすと 🌸</h1>
+        <p class="subtitle">全<span id="totalQuestions"></span>問! ゆいちゃがんばって♪</p>
+        
+        <div id="questionsContainer"></div>
+
+        <!-- 採点セクション -->
+        <div class="score-section">
+            <button class="score-btn" onclick="quiz.calculateScore()"> 採点する </button>
+            <div class="score-result" id="scoreResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // クイズクラス
+        class Quiz {
+            constructor(questions) {
+                this.questions = questions;
+                this.correctMessages = [
+                    '正解です! すばらしい! 🎉',
+                    '大正解! やったね! ✨',
+                    'パーフェクト! 💯',
+                    '素晴らしい! その調子! 🌟',
+                    '正解! よくできました! 👏'
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                this.renderQuestions();
+            }
+
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+
+                this.questions.forEach((question, index) => {
+                    const questionBox = this.createQuestionBox(question, index);
+                    container.appendChild(questionBox);
+                });
+            }
+
+            createQuestionBox(question, index) {
+                const questionNum = index + 1;
+                const box = document.createElement('div');
+                box.className = 'question-box';
+
+                box.innerHTML = `
+                    <div class="question-title">
+                        問${questionNum}. ${question.text}
+                    </div>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <label class="option">
+                                <input type="checkbox" name="q${questionNum}" value="${i + 1}">
+                                ${i + 1}. ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-btn" onclick="quiz.checkAnswer(${questionNum})">確認する ✓</button>
+                    <div class="result" id="result${questionNum}"></div>
+                `;
+
+                return box;
+            }
+
+            checkAnswer(questionNum) {
+                const question = this.questions[questionNum - 1];
+                const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                const resultDiv = document.getElementById(`result${questionNum}`);
+                
+                if (selectedInputs.length === 0) {
+                    alert('選択肢を選んでください 💭');
+                    return;
+                }
+
+                // ユーザーが選択した回答を配列で取得
+                const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                // 正解を配列に変換（単一回答の場合も配列として扱う）
+                const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                
+                const randomMessage = this.correctMessages[Math.floor(Math.random() * this.correctMessages.length)];
+
+                // 配列同士を比較
+                const isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers);
+
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = `<span class="emoji">✓</span> ${randomMessage}<br>正解: ${correctAnswers.join(', ')}`;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = `<span class="emoji">✗</span> 残念! 不正解です 😢<br>あなたの回答: ${userAnswers.join(', ')}<br>正解: ${correctAnswers.join(', ')}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+
+            calculateScore() {
+                let score = 0;
+                let answered = 0;
+
+                this.questions.forEach((question, index) => {
+                    const questionNum = index + 1;
+                    const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                    
+                    if (selectedInputs.length > 0) {
+                        answered++;
+                        
+                        // ユーザーが選択した回答を配列で取得
+                        const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                        // 正解を配列に変換
+                        const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                        
+                        // 配列同士を比較
+                        if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+                            score++;
+                        }
+                    }
+                });
+
+                if (answered < this.questions.length) {
+                    alert('すべての問題に回答してください 📝');
+                    return;
+                }
+
+                this.displayScore(score);
+            }
+
+            displayScore(score) {
+                const scoreResultDiv = document.getElementById('scoreResult');
+                const total = this.questions.length;
+                const percentage = (score / total) * 100;
+                
+                let message = '';
+                let emoji = '';
+
+                if (percentage === 100) {
+                    message = 'パーフェクト!';
+                    emoji = '🎊🎉🏆';
+                } else if (percentage >= 80) {
+                    message = 'すごい!';
+                    emoji = '🌟✨';
+                } else if (percentage >= 60) {
+                    message = 'よくできました!';
+                    emoji = '👏💐';
+                } else if (percentage >= 40) {
+                    message = 'もう少し!';
+                    emoji = '💪📚';
+                } else {
+                    message = '次はがんばろう!';
+                    emoji = '🌱🌈';
+                }
+
+                scoreResultDiv.innerHTML = `${emoji}<br>${message}<br>あなたの得点: ${score} / ${total}点`;
+                scoreResultDiv.style.display = 'block';
+
+                scoreResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // 問題データ（ここに問題を追加するだけでOK）
+        const questionsData = [
+            {
+                text: '加齢による薬物動態への影響で正しいのはどれか （第99回 2010年）',
+                options: [
+                    '半減期が短縮する',
+                    '水溶性薬物の血中濃度が低下する',
+                    '脂溶性薬物が体内に蓄積しやすくなる',
+                    '血漿蛋白と結合する薬物は薬効が低下する'
+                ],
+                answer: 3
+            },
+            {
+                text: '高齢者の薬物動態の特徴で正しいのはどれか （第107回 2018年）',
+                options: [
+                    '薬物の吸収の亢進',
+                    '薬物の代謝の亢進',
+                    '薬物の排泄の増加',
+                    '血中濃度の半減期の延長'
+                ],
+                answer: 4
+            },
+            {
+                text: '低値によって脂質異常症と診断される検査項目はどれか。 （102回、2013年）',
+                options: [
+                    'トリグリセリド',
+                    '総コレステロール',
+                    '低比重リポ蛋白コレステロール〈LDL-C〉',
+                    '高比重リポ蛋白コレステロール〈HDL-C〉'
+                ],
+                answer: 4
+            },
+            {
+                text: '・インスリン製剤について正しいのはどれか。 （107回、2018年）',
+                options: [
+                    '経口投与が可能である。',
+                    '冷凍庫で長期保存できる。',
+                    '皮下注射は同じ部位に行う。',
+                    '飛行機に搭乗する際は手荷物として持ち込む。'
+                ],
+                answer: 4
+            },
+            {
+                text: '・1型糖尿病と診断された人への説明で適切なのはどれか。 （106回、2017年）',
+                options: [
+                    '自己血糖測定の試験紙の費用は医療保険の対象外である。',
+                    '食事が摂取できないときはインスリン注射を中止する。',
+                    '低血糖症状には振戦などの自律神経症状がある。',
+                    '運動は朝食前が効果的なのである。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗甲状腺薬の副作用（有害事象）で正しいのはどれか。 （108回、2019年）',
+                options: [
+                    '頻脈',
+                    '肝機能障害',
+                    '低血糖',
+                    '不整脈',
+                    '眼球突出'
+                ],
+                answer: 2
+            },
+            {
+                text: '・B型肝炎の垂直感染防止に有効なのはどれか。 （第91回、2002年）',
+                options: [
+                    'キャリア妊婦にHBワクチンの接種を行う',
+                    '新生児の沐浴には次亜塩素酸ナトリウムを用いる',
+                    '新生児に母乳を与えない',
+                    '新生児に抗HBsヒト免疫グロブリンとHBワクチンを投与する'
+                ],
+                answer: 4
+            },
+            {
+                text: '・消化性潰瘍の治療に抗菌薬が処方される目的はどれか。 （91回、2002年）',
+                options: [
+                    '日和見感染の防止',
+                    '胆道感染の防止',
+                    '胃粘膜の微生物の除去',
+                    '正常腸内細菌叢の除去'
+                ],
+                answer: 3
+            },
+            {
+                text: '・細菌の芽胞を死滅させるのはどれか。 （109回、2020年）',
+                options: [
+                    '紫外線',
+                    'ポビドンヨード',
+                    '70％アルコール',
+                    '酸化エチレンガス'
+                ],
+                answer: 4
+            },
+            {
+                text: '・結核菌の消毒に効果があるものはどれか。 （102回、2013年）',
+                options: [
+                    'エタノール',
+                    'アクリノール',
+                    'ベンザルコニウム',
+                    'クロルヘキシジン'
+                ],
+                answer: 1
+            },
+            {
+                text: '・薬剤とその副作用（有害事象）の組合せで正しいのはどれか。 （107回、2018年）',
+                options: [
+                    '副腎皮質ステロイド ―低血糖',
+                    'ニューキノロン系抗菌薬 ―髄膜炎',
+                    'アミノグリコシド系抗菌薬 ―視神経障害',
+                    'スタチン〈HMG-CoA還元酵素阻害薬〉 ―横紋筋融解症'
+                ],
+                answer: 4
+            },
+            {
+                text: '・抗菌薬について正しいのはどれか。 （113回、2024年）',
+                options: [
+                    'ウイルスに有効である。',
+                    '経口投与では効果がない。',
+                    '耐性菌の出現が問題である。',
+                    '正常の細菌叢には影響を与えない。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・ペニシリン投与によって呼吸困難となった患者への第一選択薬はどれか。 （102回、2013年）',
+                options: [
+                    'ジギタリス',
+                    'テオフィリン',
+                    'アドレナリン',
+                    '抗ヒスタミン薬',
+                    '副腎皮質ステロイド'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗ウイルス薬はどれか。 （99回、2010年）',
+                options: [
+                    'ペニシリン',
+                    'アシクロビル',
+                    'エリスロマイシン',
+                    'アムホテリシンB'
+                ],
+                answer: 2
+            },
+            {
+                text: '成人患者の気管支喘息の治療で正しいのはどれか。 （第108回、2019年）',
+                options: [
+                    'テオフィリンの投与中は血中濃度の測定が必要である。',
+                    '副腎皮質ステロイド薬吸入後の含嗽は必要ない。',
+                    'インフルエンザワクチン接種は禁忌である。',
+                    '発作時にはβ遮断薬を内服する。'
+                ],
+                answer: 1
+            },
+            {
+                text: '喘息のため吸入用ステロイド薬を使用する患者への説明で適切なのはどれか。 （第97回、2008年）',
+                options: [
+                    '吸入前に最後まで息を吐き出してから吸い込む。',
+                    '吸入した実感があるまで数回噴霧する。',
+                    '吸入後はうがいをする。',
+                    '発作が起こりそうな時に使用する。'
+                ],
+                answer: 3
+            },
+            {
+                text: '出血傾向を考慮し手術前に投与の中止を検討するのはどれか。 （第107回、2018年）',
+                options: [
+                    'アドレナリン',
+                    'テオフィリン',
+                    'ワルファリン',
+                    'バンコマイシン'
+                ],
+                answer: 3
+            },
+            {
+                text: 'Aさん（60歳、男性）は大動脈弁置換術を受け、ワルファリンの内服を開始することになった。 Aさんが摂取を避けるべき食品はどれか。 （第111回、2022年）',
+                options: [
+                    '海藻',
+                    '牛乳',
+                    '納豆',
+                    'グレープフルーツ'
+                ],
+                answer: 3
+            },
+            {
+                text: 'ワルファリンと拮抗作用があるのはどれか。 （第102回、2013年）',
+                options: [
+                    'ビタミンA',
+                    'ビタミンC',
+                    'ビタミンD',
+                    'ビタミンE',
+                    'ビタミンK'
+                ],
+                answer: 5
+            },
+            {
+                text: '・胃食道逆流症について正しいのはどれか。2つ選べ。 （106回、2017年）',
+                options: [
+                    '食道の扁平上皮化生を起こす。',
+                    '上部食道括約筋の弛緩によって生じる。',
+                    '食道炎の程度と症状の強さが一致する。',
+                    'プロトンポンプ阻害薬が第一選択の治療法である。',
+                    'Barrett〈バレット〉上皮は腺癌の発生リスクが高い。'
+                ],
+                answer: [4, 5]
+            },
+            {
+                text: '・潰瘍性大腸炎の特徴で正しいのはどれか。2つ選べ。 （106回、2017年）',
+                options: [
+                    '遺伝性である。',
+                    '直腸に好発する。',
+                    '縦走潰瘍が特徴である。',
+                    '大腸癌の危険因子である。',
+                    '大量の水様性下痢が特徴である。'
+                ],
+                answer: [2, 4]
+            },
+            {
+                text: '・消化性潰瘍の治療に抗菌薬が処方される目的はどれか。 （91回、2002年）',
+                options: [
+                    '日和見感染の防止',
+                    '胆道感染の防止',
+                    '胃粘膜の微生物の除去',
+                    '正常腸内細菌叢の除去'
+                ],
+                answer: 3
+            },
+            {
+                text: '・Crohn〈クローン〉病の患者の食事指導で適切なのはどれか。 （108回、2019年）',
+                options: [
+                    '「食物繊維を多く含む食事にしましょう」',
+                    '「蛋白質の多い食事にしましょう」',
+                    '「脂肪分の多い食事にしましょう」',
+                    '「炭水化物を控えましょう」'
+                ],
+                answer: 2
+            },
+            {
+                text: '・グリセリン浣腸を準備する際の浣腸液の温度で適切なのはどれか。 （112回、2023年）',
+                options: [
+                    '20℃',
+                    '30℃',
+                    '40℃',
+                    '50℃'
+                ],
+                answer: 3
+            },
+            {
+                text: '・脂質異常症の成人患者に対する食事指導の内容で正しいのはどれか。 （110回、2021年）',
+                options: [
+                    '不飽和脂肪酸の摂りすぎに注意する。',
+                    'コレステロール摂取量は1日600mg未満とする。',
+                    '高トリグリセリド血症では、アルコールを制限する。',
+                    '高LDLコレステロール血症では、トランス脂肪酸の摂取を促す。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・メチシリン耐性黄色ブドウ球菌〈MRSA〉に有効な薬はどれか。 （102回、2013年）',
+                options: [
+                    'バンコマイシン塩酸塩',
+                    'セファゾリンナトリウム',
+                    'ストレプトマイシン硫酸塩',
+                    'ベンジルペニシリンカリウム'
+                ],
+                answer: 1
+            },
+            {
+                text: '・狭心症発作時の硝酸薬（ニトログリセリン）の適切な使用法はどれか （第96回、2007年）',
+                options: [
+                    '内服',
+                    '舌下',
+                    '皮膚貼付',
+                    '筋肉内注射'
+                ],
+                answer: 2
+            },
+            {
+                text: '・ニトログリセリンの作用はどれか （第98回、2009年）',
+                options: [
+                    '昇圧',
+                    '造血',
+                    '血管拡張',
+                    '免疫抑制'
+                ],
+                answer: 3
+            },
+            {
+                text: '・狭心症発作時に使用するのはどれか （第97回、2008年）',
+                options: [
+                    'アスピリン',
+                    'テオフィリン',
+                    'リン酸コデイン',
+                    'ニトログリセリン'
+                ],
+                answer: 4
+            },
+            {
+                text: '・狭心症の治療に用いる薬はどれか。2つ選べ （第106回、2017年）',
+                options: [
+                    'アンジオテンシンⅡ受容体拮抗薬',
+                    'スルホニル尿素',
+                    'ジギタリス製剤',
+                    '抗血小板薬',
+                    '硝酸薬'
+                ],
+                answer: [4, 5]
+            }
+        ];
+
+        // クイズの初期化
+        const quiz = new Quiz(questionsData);
+    </script>
+</body>
+</html>

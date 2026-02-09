@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学てすと</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin: 12px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 3px dashed #667eea;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 100%;
+            max-width: 300px;
+            min-height: 52px; /* タップしやすい高さ */
+        }
+
+        .score-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.6);
+        }
+
+        .score-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            display: none;
+            animation: bounce 0.6s ease;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        /* iPhone用の最適化 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .question-title {
+                font-size: 0.88em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 薬理学てすと 🌸</h1>
+        <p class="subtitle">全<span id="totalQuestions"></span>問! ゆいちゃがんばって♪</p>
+        
+        <div id="questionsContainer"></div>
+
+        <!-- 採点セクション -->
+        <div class="score-section">
+            <button class="score-btn" onclick="quiz.calculateScore()"> 採点する </button>
+            <div class="score-result" id="scoreResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // クイズクラス
+        class Quiz {
+            constructor(questions) {
+                this.questions = questions;
+                this.correctMessages = [
+                    '正解です! すばらしい! 🎉',
+                    '大正解! やったね! ✨',
+                    'パーフェクト! 💯',
+                    '素晴らしい! その調子! 🌟',
+                    '正解! よくできました! 👏'
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                this.renderQuestions();
+            }
+
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+
+                this.questions.forEach((question, index) => {
+                    const questionBox = this.createQuestionBox(question, index);
+                    container.appendChild(questionBox);
+                });
+            }
+
+            createQuestionBox(question, index) {
+                const questionNum = index + 1;
+                const box = document.createElement('div');
+                box.className = 'question-box';
+
+                box.innerHTML = `
+                    <div class="question-title">
+                        問${questionNum}. ${question.text}
+                    </div>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <label class="option">
+                                <input type="checkbox" name="q${questionNum}" value="${i + 1}">
+                                ${i + 1}. ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-btn" onclick="quiz.checkAnswer(${questionNum})">確認する ✓</button>
+                    <div class="result" id="result${questionNum}"></div>
+                `;
+
+                return box;
+            }
+
+            checkAnswer(questionNum) {
+                const question = this.questions[questionNum - 1];
+                const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                const resultDiv = document.getElementById(`result${questionNum}`);
+                
+                if (selectedInputs.length === 0) {
+                    alert('選択肢を選んでください 💭');
+                    return;
+                }
+
+                // ユーザーが選択した回答を配列で取得
+                const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                // 正解を配列に変換（単一回答の場合も配列として扱う）
+                const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                
+                const randomMessage = this.correctMessages[Math.floor(Math.random() * this.correctMessages.length)];
+
+                // 配列同士を比較
+                const isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers);
+
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = `<span class="emoji">✓</span> ${randomMessage}<br>正解: ${correctAnswers.join(', ')}`;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = `<span class="emoji">✗</span> 残念! 不正解です 😢<br>あなたの回答: ${userAnswers.join(', ')}<br>正解: ${correctAnswers.join(', ')}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+
+            calculateScore() {
+                let score = 0;
+                let answered = 0;
+
+                this.questions.forEach((question, index) => {
+                    const questionNum = index + 1;
+                    const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                    
+                    if (selectedInputs.length > 0) {
+                        answered++;
+                        
+                        // ユーザーが選択した回答を配列で取得
+                        const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                        // 正解を配列に変換
+                        const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                        
+                        // 配列同士を比較
+                        if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+                            score++;
+                        }
+                    }
+                });
+
+                if (answered < this.questions.length) {
+                    alert('すべての問題に回答してください 📝');
+                    return;
+                }
+
+                this.displayScore(score);
+            }
+
+            displayScore(score) {
+                const scoreResultDiv = document.getElementById('scoreResult');
+                const total = this.questions.length;
+                const percentage = (score / total) * 100;
+                
+                let message = '';
+                let emoji = '';
+
+                if (percentage === 100) {
+                    message = 'パーフェクト!';
+                    emoji = '🎊🎉🏆';
+                } else if (percentage >= 80) {
+                    message = 'すごい!';
+                    emoji = '🌟✨';
+                } else if (percentage >= 60) {
+                    message = 'よくできました!';
+                    emoji = '👏💐';
+                } else if (percentage >= 40) {
+                    message = 'もう少し!';
+                    emoji = '💪📚';
+                } else {
+                    message = '次はがんばろう!';
+                    emoji = '🌱🌈';
+                }
+
+                scoreResultDiv.innerHTML = `${emoji}<br>${message}<br>あなたの得点: ${score} / ${total}点`;
+                scoreResultDiv.style.display = 'block';
+
+                scoreResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // 問題データ（ここに問題を追加するだけでOK）
+        const questionsData = [
+            {
+                text: 'アセチルコリンで収縮するのはどれか。2つ選べ。',
+                options: [
+                    '心筋',
+                    '排尿筋',
+                    '腓腹筋',
+                    '立毛筋',
+                    '瞳孔散大筋'
+                ],
+                answer: [2, 3]
+            },
+            {
+                text: '麻酔前投薬で気管支粘膜からの分泌抑制を目的に使用するのはどれか。',
+                options: [
+                    'モルヒネ',
+                    'アトロピン',
+                    'ジアゼパム',
+                    'ペンタゾシン'
+                ],
+                answer: 2
+            },
+            {
+                text: 'Aさん(34歳、初産婦)。陣痛発来して、産婦人科に入院した。Aさんは無痛分娩を希望し、硬膜外カテーテルから局所麻酔薬が投与された。その3分後に、Aさんは手のしびれと気分不快を訴えた。頸部に氷を当てたところAさんはあまり冷たくないという。この時点で直ちに準備するもので優先度が高いのはどれか。',
+                options: [
+                    '降圧薬',
+                    '輸血用器材',
+                    '吸入ステロイド薬',
+                    '気管挿管のための器材',
+                    '自動体外式除細動器〈AED〉'
+                ],
+                answer: 4
+            },
+            {
+                text: '65歳の男性のAさんは上部消化管の内視鏡検査を受ける際、抗コリン薬を投与された。看護師がAさんに行う説明で適切なのはどれか。',
+                options: [
+                    '検査直後から自動車を運転して帰宅できる',
+                    '検査終了後の半日は飲食を禁止する',
+                    '排尿困難を生じる可能性がある',
+                    '腹痛が強くても下血がなければ様子を見る'
+                ],
+                answer: 3
+            },
+            {
+                text: '抗コリン薬の投与が禁忌の疾患はどれか。2つ選べ。',
+                options: [
+                    '疥癬',
+                    '緑内障',
+                    '大腿骨骨折',
+                    '前立腺肥大症',
+                    '前頭側頭型認知症'
+                ],
+                answer: [2, 4]
+            },
+            {
+                text: '選択的セロトニン再取り込み阻害薬（SSRI）について正しいのはどれか。',
+                options: [
+                    'パニック障害に対する効果はない',
+                    '抗コリン作用は三環系抗うつ薬よりも弱い',
+                    'うつ状態が改善したら直ちに使用を中止する',
+                    '抗うつ効果の評価は投与開始後3日以内に行う'
+                ],
+                answer: 2
+            },
+            {
+                text: '選択的セロトニン再取り込み阻害薬（SSRI）について正しいのはどれか。',
+                options: [
+                    'パニック障害にして有効である',
+                    '抗コリン作用は三環系抗うつ薬よりも強い',
+                    'うつ状態が改善したら直ちに使用を中止する',
+                    '抗うつ効果の評価は投与開始後3日以内に行う'
+                ],
+                answer: 1
+            },
+            {
+                text: '入院時イソプロテレノール（β刺激薬）が投与された。患者に説明する内容として最も適切なのはどれか。',
+                options: [
+                    '「熱が上がることがあります」',
+                    '「ドキドキするようなら教えてください」',
+                    '「排尿しづらくなったら教えてください」',
+                    '「物が二重に見えるので気を付けてください」'
+                ],
+                answer: 2
+            },
+            {
+                text: '散瞳薬を用いて眼底検査を受ける成人患者への対応で適切なのはどれか。',
+                options: [
+                    '検査中は室内を明るくする',
+                    '散瞳薬の点眼は検査直前に行う',
+                    '検査前に緑内障の有無を確認する',
+                    '検査後1時間で自動車の運転が可能になると説明する'
+                ],
+                answer: 3
+            },
+            {
+                text: '36歳の妊婦。妊娠35週5日。切迫早産で入院となった。ベッド上安静で子宮収縮抑制薬（リトドリン塩酸塩）の持続点滴静脈内注射が開始となった。入院時、血圧118/84 mmHg。尿蛋白（±）、尿糖（−）。Hb 11.5g/dL、Ht 34%。入院中、最も起こりやすいのはどれか。',
+                options: [
+                    '徐脈',
+                    '貧血',
+                    '便秘',
+                    '浮腫'
+                ],
+                answer: 3
+            },
+            {
+                text: '緑内障患者への投与が禁忌なのはどれか。',
+                options: [
+                    'コデイン',
+                    'アスピリン',
+                    'アトロピン',
+                    'ジギキシン',
+                    'フェニトイン'
+                ],
+                answer: 3
+            },
+            {
+                text: '勃起不全治療薬の使用禁忌はどれか。',
+                options: [
+                    'ビタミンB6',
+                    '硫酸マグネシウム',
+                    'ニトログリセリン',
+                    '炭酸水素ナトリウム'
+                ],
+                answer: 3
+            },
+            {
+                text: '注射部位の皮膚をつまみ上げて実施するのはどれか。',
+                options: [
+                    '皮内注射',
+                    '皮下注射',
+                    '筋肉内注射',
+                    '静脈内注射'
+                ],
+                answer: 2
+            },
+            {
+                text: '注射針を皮膚に対して45〜90度の角度で刺入するのはどれか。',
+                options: [
+                    '皮内注射',
+                    '皮下注射',
+                    '筋肉内注射',
+                    '静脈内注射'
+                ],
+                answer: 3
+            },
+            {
+                text: '中心静脈から投与しなければならないのはどれか。',
+                options: [
+                    '脂肪乳剤',
+                    '生理食塩液',
+                    '5％ブドウ糖液',
+                    '高カロリー輸液'
+                ],
+                answer: 4
+            },
+            {
+                text: '交感神経の作用はどれか。2つ選べ。',
+                options: [
+                    '散瞳',
+                    '精神性発汗',
+                    '腸蠕動の促進',
+                    '排尿筋の収縮',
+                    'グリコーゲン合成の促進'
+                ],
+                answer: [1, 2]
+            },
+            {
+                text: '医薬品に関する禁忌を示すことが定められているのはどれか。',
+                options: [
+                    '処方箋',
+                    '診断書',
+                    '看護記録',
+                    '添付文書'
+                ],
+                answer: 4
+            },
+            {
+                text: '麻薬の取り扱いで正しいのはどれか。',
+                options: [
+                    '看護師は麻薬施用者免許を取得できる',
+                    '麻薬を廃棄したときは市町村長に届け出る',
+                    'アンプルの麻薬注射液は複数の患者に分割して用いる',
+                    '麻薬及び向精神薬取締法に管理について規定されている'
+                ],
+                answer: 4
+            },
+            {
+                text: '他の医薬品と区別して貯蔵し、鍵をかけた堅固な設備内に保管することが法律で定められているのはどれか。',
+                options: [
+                    'ヘパリン',
+                    'インスリン',
+                    'リドカイン',
+                    'フェンタニル'
+                ],
+                answer: 4
+            },
+            {
+                text: '毒薬の保管方法を規定している法律はどれか。',
+                options: [
+                    '薬剤師法',
+                    '毒物及び劇物取締法',
+                    '麻薬及び向精神薬取締法',
+                    '医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律（医薬品医療機器等法）'
+                ],
+                answer: 4
+            },
+            {
+                text: '薬物の効果発現が最も早いのはどれか。',
+                options: [
+                    '皮下注射',
+                    '経口与薬',
+                    '直腸内与薬',
+                    '静脈内注射'
+                ],
+                answer: 4
+            },
+            {
+                text: '成人への与薬方法で正しいのはどれか。',
+                options: [
+                    '筋肉内注射は大殿筋に行う',
+                    '坐薬は肛門から1cm挿入する',
+                    'バッカル錠は、かんでから飲み込む',
+                    '点眼薬は下眼瞼結膜の中央に滴下する'
+                ],
+                answer: 4
+            },
+            {
+                text: 'アナフィラキシーショックに対して最も即効性があるのはどれか。',
+                options: [
+                    '塩化カリウム',
+                    'テオフィリン',
+                    'アドレナリン',
+                    'プレドニゾロン',
+                    '硫酸マグネシウム'
+                ],
+                answer: 3
+            },
+            {
+                text: '点眼薬の投与について正しいのはどれか。',
+                options: [
+                    '点眼時は上眼瞼を上げる',
+                    '点眼容器の先端は眼瞼結膜に当てる',
+                    '点眼後は眼球を圧迫する',
+                    '眼から溢れた薬液は拭き取る'
+                ],
+                answer: 4
+            },
+            {
+                text: '成人への坐薬の挿入方法で正しいのはどれか。',
+                options: [
+                    '息を止めるよう説明する',
+                    '右側臥位になるよう説明する',
+                    '挿入後、1、2分肛門を押さえる',
+                    '肛門から2cmの位置に挿入する'
+                ],
+                answer: 3
+            },
+            {
+                text: '与薬の指示で食間はどれか。',
+                options: [
+                    '食事中',
+                    '食後30分',
+                    '食前30分',
+                    '食後120分'
+                ],
+                answer: 4
+            },
+            {
+                text: '与薬で誤っているのはどれか。',
+                options: [
+                    'カプセル薬は飲みにくくてもそのまま服用するよう説明する',
+                    '与薬時は患者に姓名を言ってもらい確認する',
+                    'アンプルは注射が終わるまで残しておく',
+                    '坐薬は体温程度に温めて挿入する'
+                ],
+                answer: 4
+            },
+            {
+                text: '薬物の吸収速度が最も速いのはどれか。',
+                options: [
+                    '経口投与',
+                    '筋肉内注射',
+                    '静脈内注射',
+                    '直腸内投与'
+                ],
+                answer: 3
+            },
+            {
+                text: '薬物血中濃度モニタリング〈TDM〉の実施が必要な薬物はどれか。2つ選べ。',
+                options: [
+                    'ヘパリン',
+                    'インスリン',
+                    'ジギタリス',
+                    '炭酸リチウム',
+                    'ニトログリセリン'
+                ],
+                answer: [3, 4]
+            },
+            {
+                text: '血中濃度を確認する必要性が最も高い医薬品はどれか。',
+                options: [
+                    'アスピリン',
+                    'フロセミド',
+                    'テオフィリン',
+                    'インドメタシン'
+                ],
+                answer: 3
+            },
+            {
+                text: '点眼指導で適切なのはどれか。',
+                options: [
+                    '油性と水性の薬剤を両方使うときは、油性の薬剤を先に点眼する',
+                    '容器の先端が睫毛に接したら点眼する',
+                    '点眼後は、乾燥するまでまばたきをしない',
+                    '点眼後は、ふき綿で涙嚢部を軽く圧迫する'
+                ],
+                answer: 4
+            }
+        ];
+
+        // クイズの初期化
+        const quiz = new Quiz(questionsData);
+    </script>
+</body>
+</html>

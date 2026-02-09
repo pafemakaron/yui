@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薬理学てすと</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic Pro', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #764ba2;
+            font-size: 0.95em;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin: 12px 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .option:active {
+            background: #f0f4ff;
+            border-color: #667eea;
+            transform: scale(0.98);
+        }
+
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            flex-shrink: 0;
+        }
+
+        .check-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            width: 100%;
+            min-height: 48px; /* タップしやすい高さ */
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .result {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .score-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 3px dashed #667eea;
+        }
+
+        .score-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            width: 100%;
+            max-width: 300px;
+            min-height: 52px; /* タップしやすい高さ */
+        }
+
+        .score-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(245, 87, 108, 0.6);
+        }
+
+        .score-result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f5576c;
+            display: none;
+            animation: bounce 0.6s ease;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin: 0 3px;
+        }
+
+        /* iPhone用の最適化 */
+        @media (max-width: 390px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .question-title {
+                font-size: 0.88em;
+            }
+
+            .option {
+                font-size: 0.85em;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌸 薬理学てすと 🌸</h1>
+        <p class="subtitle">全<span id="totalQuestions"></span>問! ゆいちゃがんばって♪</p>
+        
+        <div id="questionsContainer"></div>
+
+        <!-- 採点セクション -->
+        <div class="score-section">
+            <button class="score-btn" onclick="quiz.calculateScore()"> 採点する </button>
+            <div class="score-result" id="scoreResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // クイズクラス
+        class Quiz {
+            constructor(questions) {
+                this.questions = questions;
+                this.correctMessages = [
+                    '正解です! すばらしい! 🎉',
+                    '大正解! やったね! ✨',
+                    'パーフェクト! 💯',
+                    '素晴らしい! その調子! 🌟',
+                    '正解! よくできました! 👏'
+                ];
+                this.init();
+            }
+
+            init() {
+                document.getElementById('totalQuestions').textContent = this.questions.length;
+                this.renderQuestions();
+            }
+
+            renderQuestions() {
+                const container = document.getElementById('questionsContainer');
+                container.innerHTML = '';
+
+                this.questions.forEach((question, index) => {
+                    const questionBox = this.createQuestionBox(question, index);
+                    container.appendChild(questionBox);
+                });
+            }
+
+            createQuestionBox(question, index) {
+                const questionNum = index + 1;
+                const box = document.createElement('div');
+                box.className = 'question-box';
+
+                box.innerHTML = `
+                    <div class="question-title">
+                        問${questionNum}. ${question.text}
+                    </div>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <label class="option">
+                                <input type="checkbox" name="q${questionNum}" value="${i + 1}">
+                                ${i + 1}. ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-btn" onclick="quiz.checkAnswer(${questionNum})">確認する ✓</button>
+                    <div class="result" id="result${questionNum}"></div>
+                `;
+
+                return box;
+            }
+
+            checkAnswer(questionNum) {
+                const question = this.questions[questionNum - 1];
+                const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                const resultDiv = document.getElementById(`result${questionNum}`);
+                
+                if (selectedInputs.length === 0) {
+                    alert('選択肢を選んでください 💭');
+                    return;
+                }
+
+                // ユーザーが選択した回答を配列で取得
+                const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                // 正解を配列に変換（単一回答の場合も配列として扱う）
+                const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                
+                const randomMessage = this.correctMessages[Math.floor(Math.random() * this.correctMessages.length)];
+
+                // 配列同士を比較
+                const isCorrect = JSON.stringify(userAnswers) === JSON.stringify(correctAnswers);
+
+                if (isCorrect) {
+                    resultDiv.className = 'result correct';
+                    resultDiv.innerHTML = `<span class="emoji">✓</span> ${randomMessage}<br>正解: ${correctAnswers.join(', ')}`;
+                } else {
+                    resultDiv.className = 'result incorrect';
+                    resultDiv.innerHTML = `<span class="emoji">✗</span> 残念! 不正解です 😢<br>あなたの回答: ${userAnswers.join(', ')}<br>正解: ${correctAnswers.join(', ')}`;
+                }
+                
+                resultDiv.style.display = 'block';
+            }
+
+            calculateScore() {
+                let score = 0;
+                let answered = 0;
+
+                this.questions.forEach((question, index) => {
+                    const questionNum = index + 1;
+                    const selectedInputs = document.querySelectorAll(`input[name="q${questionNum}"]:checked`);
+                    
+                    if (selectedInputs.length > 0) {
+                        answered++;
+                        
+                        // ユーザーが選択した回答を配列で取得
+                        const userAnswers = Array.from(selectedInputs).map(input => parseInt(input.value)).sort();
+                        // 正解を配列に変換
+                        const correctAnswers = Array.isArray(question.answer) ? question.answer.sort() : [question.answer];
+                        
+                        // 配列同士を比較
+                        if (JSON.stringify(userAnswers) === JSON.stringify(correctAnswers)) {
+                            score++;
+                        }
+                    }
+                });
+
+                if (answered < this.questions.length) {
+                    alert('すべての問題に回答してください 📝');
+                    return;
+                }
+
+                this.displayScore(score);
+            }
+
+            displayScore(score) {
+                const scoreResultDiv = document.getElementById('scoreResult');
+                const total = this.questions.length;
+                const percentage = (score / total) * 100;
+                
+                let message = '';
+                let emoji = '';
+
+                if (percentage === 100) {
+                    message = 'パーフェクト!';
+                    emoji = '🎊🎉🏆';
+                } else if (percentage >= 80) {
+                    message = 'すごい!';
+                    emoji = '🌟✨';
+                } else if (percentage >= 60) {
+                    message = 'よくできました!';
+                    emoji = '👏💐';
+                } else if (percentage >= 40) {
+                    message = 'もう少し!';
+                    emoji = '💪📚';
+                } else {
+                    message = '次はがんばろう!';
+                    emoji = '🌱🌈';
+                }
+
+                scoreResultDiv.innerHTML = `${emoji}<br>${message}<br>あなたの得点: ${score} / ${total}点`;
+                scoreResultDiv.style.display = 'block';
+
+                scoreResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // 問題データ（ここに問題を追加するだけでOK）
+        const questionsData = [
+            {
+                text: '加齢による薬物動態への影響で正しいのはどれか （第99回 2010年）',
+                options: [
+                    '半減期が短縮する',
+                    '水溶性薬物の血中濃度が低下する',
+                    '脂溶性薬物が体内に蓄積しやすくなる',
+                    '血漿蛋白と結合する薬物は薬効が低下する'
+                ],
+                answer: 3
+            },
+            {
+                text: '高齢者の薬物動態の特徴で正しいのはどれか （第107回 2018年）',
+                options: [
+                    '薬物の吸収の亢進',
+                    '薬物の代謝の亢進',
+                    '薬物の排泄の増加',
+                    '血中濃度の半減期の延長'
+                ],
+                answer: 4
+            },
+            {
+                text: '低値によって脂質異常症と診断される検査項目はどれか。 （102回、2013年）',
+                options: [
+                    'トリグリセリド',
+                    '総コレステロール',
+                    '低比重リポ蛋白コレステロール〈LDL-C〉',
+                    '高比重リポ蛋白コレステロール〈HDL-C〉'
+                ],
+                answer: 4
+            },
+            {
+                text: '・インスリン製剤について正しいのはどれか。 （107回、2018年）',
+                options: [
+                    '経口投与が可能である。',
+                    '冷凍庫で長期保存できる。',
+                    '皮下注射は同じ部位に行う。',
+                    '飛行機に搭乗する際は手荷物として持ち込む。'
+                ],
+                answer: 4
+            },
+            {
+                text: '・1型糖尿病と診断された人への説明で適切なのはどれか。 （106回、2017年）',
+                options: [
+                    '自己血糖測定の試験紙の費用は医療保険の対象外である。',
+                    '食事が摂取できないときはインスリン注射を中止する。',
+                    '低血糖症状には振戦などの自律神経症状がある。',
+                    '運動は朝食前が効果的なのである。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗甲状腺薬の副作用（有害事象）で正しいのはどれか。 （108回、2019年）',
+                options: [
+                    '頻脈',
+                    '肝機能障害',
+                    '低血糖',
+                    '不整脈',
+                    '眼球突出'
+                ],
+                answer: 2
+            },
+            {
+                text: '・B型肝炎の垂直感染防止に有効なのはどれか。 （第91回、2002年）',
+                options: [
+                    'キャリア妊婦にHBワクチンの接種を行う',
+                    '新生児の沐浴には次亜塩素酸ナトリウムを用いる',
+                    '新生児に母乳を与えない',
+                    '新生児に抗HBsヒト免疫グロブリンとHBワクチンを投与する'
+                ],
+                answer: 4
+            },
+            {
+                text: '・消化性潰瘍の治療に抗菌薬が処方される目的はどれか。 （91回、2002年）',
+                options: [
+                    '日和見感染の防止',
+                    '胆道感染の防止',
+                    '胃粘膜の微生物の除去',
+                    '正常腸内細菌叢の除去'
+                ],
+                answer: 3
+            },
+            {
+                text: '・細菌の芽胞を死滅させるのはどれか。 （109回、2020年）',
+                options: [
+                    '紫外線',
+                    'ポビドンヨード',
+                    '70％アルコール',
+                    '酸化エチレンガス'
+                ],
+                answer: 4
+            },
+            {
+                text: '・結核菌の消毒に効果があるものはどれか。 （102回、2013年）',
+                options: [
+                    'エタノール',
+                    'アクリノール',
+                    'ベンザルコニウム',
+                    'クロルヘキシジン'
+                ],
+                answer: 1
+            },
+            {
+                text: '・薬剤とその副作用（有害事象）の組合せで正しいのはどれか。 （107回、2018年）',
+                options: [
+                    '副腎皮質ステロイド ―低血糖',
+                    'ニューキノロン系抗菌薬 ―髄膜炎',
+                    'アミノグリコシド系抗菌薬 ―視神経障害',
+                    'スタチン〈HMG-CoA還元酵素阻害薬〉 ―横紋筋融解症'
+                ],
+                answer: 4
+            },
+            {
+                text: '・抗菌薬について正しいのはどれか。 （113回、2024年）',
+                options: [
+                    'ウイルスに有効である。',
+                    '経口投与では効果がない。',
+                    '耐性菌の出現が問題である。',
+                    '正常の細菌叢には影響を与えない。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・ペニシリン投与によって呼吸困難となった患者への第一選択薬はどれか。 （102回、2013年）',
+                options: [
+                    'ジギタリス',
+                    'テオフィリン',
+                    'アドレナリン',
+                    '抗ヒスタミン薬',
+                    '副腎皮質ステロイド'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗ウイルス薬はどれか。 （99回、2010年）',
+                options: [
+                    'ペニシリン',
+                    'アシクロビル',
+                    'エリスロマイシン',
+                    'アムホテリシンB'
+                ],
+                answer: 2
+            },
+            {
+                text: '成人患者の気管支喘息の治療で正しいのはどれか。 （第108回、2019年）',
+                options: [
+                    'テオフィリンの投与中は血中濃度の測定が必要である。',
+                    '副腎皮質ステロイド薬吸入後の含嗽は必要ない。',
+                    'インフルエンザワクチン接種は禁忌である。',
+                    '発作時にはβ遮断薬を内服する。'
+                ],
+                answer: 1
+            },
+            {
+                text: '喘息のため吸入用ステロイド薬を使用する患者への説明で適切なのはどれか。 （第97回、2008年）',
+                options: [
+                    '吸入前に最後まで息を吐き出してから吸い込む。',
+                    '吸入した実感があるまで数回噴霧する。',
+                    '吸入後はうがいをする。',
+                    '発作が起こりそうな時に使用する。'
+                ],
+                answer: 3
+            },
+            {
+                text: '出血傾向を考慮し手術前に投与の中止を検討するのはどれか。 （第107回、2018年）',
+                options: [
+                    'アドレナリン',
+                    'テオフィリン',
+                    'ワルファリン',
+                    'バンコマイシン'
+                ],
+                answer: 3
+            },
+            {
+                text: 'Aさん（60歳、男性）は大動脈弁置換術を受け、ワルファリンの内服を開始することになった。 Aさんが摂取を避けるべき食品はどれか。 （第111回、2022年）',
+                options: [
+                    '海藻',
+                    '牛乳',
+                    '納豆',
+                    'グレープフルーツ'
+                ],
+                answer: 3
+            },
+            {
+                text: 'ワルファリンと拮抗作用があるのはどれか。 （第102回、2013年）',
+                options: [
+                    'ビタミンA',
+                    'ビタミンC',
+                    'ビタミンD',
+                    'ビタミンE',
+                    'ビタミンK'
+                ],
+                answer: 5
+            },
+            {
+                text: '・胃食道逆流症について正しいのはどれか。2つ選べ。 （106回、2017年）',
+                options: [
+                    '食道の扁平上皮化生を起こす。',
+                    '上部食道括約筋の弛緩によって生じる。',
+                    '食道炎の程度と症状の強さが一致する。',
+                    'プロトンポンプ阻害薬が第一選択の治療法である。',
+                    'Barrett〈バレット〉上皮は腺癌の発生リスクが高い。'
+                ],
+                answer: [4, 5]
+            },
+            {
+                text: '・潰瘍性大腸炎の特徴で正しいのはどれか。2つ選べ。 （106回、2017年）',
+                options: [
+                    '遺伝性である。',
+                    '直腸に好発する。',
+                    '縦走潰瘍が特徴である。',
+                    '大腸癌の危険因子である。',
+                    '大量の水様性下痢が特徴である。'
+                ],
+                answer: [2, 4]
+            },
+            {
+                text: '・消化性潰瘍の治療に抗菌薬が処方される目的はどれか。 （91回、2002年）',
+                options: [
+                    '日和見感染の防止',
+                    '胆道感染の防止',
+                    '胃粘膜の微生物の除去',
+                    '正常腸内細菌叢の除去'
+                ],
+                answer: 3
+            },
+            {
+                text: '・Crohn〈クローン〉病の患者の食事指導で適切なのはどれか。 （108回、2019年）',
+                options: [
+                    '「食物繊維を多く含む食事にしましょう」',
+                    '「蛋白質の多い食事にしましょう」',
+                    '「脂肪分の多い食事にしましょう」',
+                    '「炭水化物を控えましょう」'
+                ],
+                answer: 2
+            },
+            {
+                text: '・グリセリン浣腸を準備する際の浣腸液の温度で適切なのはどれか。 （112回、2023年）',
+                options: [
+                    '20℃',
+                    '30℃',
+                    '40℃',
+                    '50℃'
+                ],
+                answer: 3
+            },
+            {
+                text: '・脂質異常症の成人患者に対する食事指導の内容で正しいのはどれか。 （110回、2021年）',
+                options: [
+                    '不飽和脂肪酸の摂りすぎに注意する。',
+                    'コレステロール摂取量は1日600mg未満とする。',
+                    '高トリグリセリド血症では、アルコールを制限する。',
+                    '高LDLコレステロール血症では、トランス脂肪酸の摂取を促す。'
+                ],
+                answer: 3
+            },
+            {
+                text: '・メチシリン耐性黄色ブドウ球菌〈MRSA〉に有効な薬はどれか。 （102回、2013年）',
+                options: [
+                    'バンコマイシン塩酸塩',
+                    'セファゾリンナトリウム',
+                    'ストレプトマイシン硫酸塩',
+                    'ベンジルペニシリンカリウム'
+                ],
+                answer: 1
+            },
+            {
+                text: '・狭心症発作時の硝酸薬（ニトログリセリン）の適切な使用法はどれか （第96回、2007年）',
+                options: [
+                    '内服',
+                    '舌下',
+                    '皮膚貼付',
+                    '筋肉内注射'
+                ],
+                answer: 2
+            },
+            {
+                text: '・ニトログリセリンの作用はどれか （第98回、2009年）',
+                options: [
+                    '昇圧',
+                    '造血',
+                    '血管拡張',
+                    '免疫抑制'
+                ],
+                answer: 3
+            },
+            {
+                text: '・狭心症発作時に使用するのはどれか （第97回、2008年）',
+                options: [
+                    'アスピリン',
+                    'テオフィリン',
+                    'リン酸コデイン',
+                    'ニトログリセリン'
+                ],
+                answer: 4
+            },
+            {
+                text: '・狭心症の治療に用いる薬はどれか。2つ選べ （第106回、2017年）',
+                options: [
+                    'アンジオテンシンⅡ受容体拮抗薬',
+                    'スルホニル尿素',
+                    'ジギタリス製剤',
+                    '抗血小板薬',
+                    '硝酸薬'
+                ],
+                answer: [4, 5]
+            },
+            {
+                text: '・ジギタリスの副作用（有害事象）はどれか （第107回、2018年）',
+                options: [
+                    '難聴',
+                    '悪心',
+                    '易感染',
+                    '低血糖'
+                ],
+                answer: 2
+            },
+            {
+                text: '・ジギタリス中毒の症状はどれか （第97回、2008年）',
+                options: [
+                    '脱毛',
+                    '難聴',
+                    '不整脈',
+                    '呼吸抑制'
+                ],
+                answer: 3
+            },
+            {
+                text: '・左心室の収縮力を抑制するのはどれか （第103回、2014年）',
+                options: [
+                    'アンジオテンシンⅡ受容体拮抗薬',
+                    'β遮断薬',
+                    '硝酸薬',
+                    '利尿薬'
+                ],
+                answer: 2
+            },
+            {
+                text: '鉄欠乏性貧血の症状または所見として考えられるのはどれか。2つ選べ （第102回、2013年）',
+                options: [
+                    '動悸',
+                    '匙状爪',
+                    'ほてり感',
+                    '運動失調',
+                    '皮膚の紅潮'
+                ],
+                answer: [1, 2]
+            },
+            {
+                text: '悪性貧血で正しいのはどれか。2つ選べ。 （第110回、2021年）',
+                options: [
+                    '貧血のうち90%以上を占める。',
+                    '異食症が出現する。',
+                    '小球性の貧血である。',
+                    '胃癌の発症率が高い。',
+                    '自己免疫機序で発症する。'
+                ],
+                answer: [4, 5]
+            },
+            {
+                text: '不足すると貧血になるのはどれか。 （第96回、2007年）',
+                options: [
+                    'ビタミンA',
+                    'ビタミンB12',
+                    'ビタミンD',
+                    'ビタミンE'
+                ],
+                answer: 2
+            },
+            {
+                text: '貧血を伴う患者の爪の写真を別に示す。欠乏している栄養素はどれか。 （第109回、2020年）',
+                options: [
+                    'ビタミンB12',
+                    'ビタミンC',
+                    '葉酸',
+                    '鉄'
+                ],
+                answer: 4
+            },
+            {
+                text: '白血球減少症で正しいのはどれか。2つ選べ。 （第104回、2015年）',
+                options: [
+                    '好塩基球数は増加する。',
+                    'EBウイルス感染によって起こる。',
+                    '白血球数が3,000/μL以下をいう。',
+                    '好中球減少症では細菌に感染しやすくなる。',
+                    '無顆粒球症は単球がなくなった病態をいう。'
+                ],
+                answer: [3, 4]
+            },
+            {
+                text: '生体内で生じた血栓を溶解するのはどれか。 （第95回、2006年）',
+                options: [
+                    'トロンボプラスチン',
+                    'カルシウムイオン',
+                    'プラスミン',
+                    'トロンビン'
+                ],
+                answer: 3
+            },
+            {
+                text: '抗血小板作用と抗炎症作用があるのはどれか。 （第103回、2014年）',
+                options: [
+                    'ヘパリン',
+                    'アルブミン',
+                    'アスピリン',
+                    'ワルファリン'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗癌薬の副作用（有害事象）である骨髄抑制を示しているのはどれか。 （104回）',
+                options: [
+                    '嘔吐',
+                    '下痢',
+                    '神経障害',
+                    '白血球減少'
+                ],
+                answer: 4
+            },
+            {
+                text: '・長期投与すると骨粗鬆症を発症するリスクが高まるのはどれか （第101回、2012年）',
+                options: [
+                    'ビタミンD',
+                    'ビタミンK',
+                    'エストロゲン',
+                    'ワルファリン',
+                    '副腎皮質ステロイド'
+                ],
+                answer: 5
+            },
+            {
+                text: '・高尿酸血症で正しいのはどれか （第111回、2022年）',
+                options: [
+                    '痛風結節は疼痛を伴う',
+                    '痛風発作は飲酒で誘発される',
+                    '痛風による関節炎の急性期に尿酸降下薬を投与する',
+                    '血清尿酸値9.0mg/dL以下を目標にコントロールする'
+                ],
+                answer: 2
+            },
+            {
+                text: '・最終代謝産物に尿酸が含まれるのはどれか （第109回、2020年）',
+                options: [
+                    '核酸',
+                    'リン脂質',
+                    '中性脂肪',
+                    'グルコース',
+                    'コレステロール'
+                ],
+                answer: 1
+            },
+            {
+                text: '・痛風の患者が摂取量を減らすことが望ましい食品はどれか （第113回、2024年）',
+                options: [
+                    '鶏卵',
+                    'チーズ',
+                    '鶏レバー',
+                    'じゃがいも'
+                ],
+                answer: 3
+            },
+            {
+                text: '・関節リウマチで正しいのはどれか （第96回、2007年）',
+                options: [
+                    '関節滑膜から病変が始まる。',
+                    '片側から出現し反対側に及ぶ',
+                    '膝関節で起こるとO脚になる',
+                    '運動すると関節のこわばりが出現する'
+                ],
+                answer: 1
+            },
+            {
+                text: '鉄の摂取不足によって起こるのはどれか。 （96回、2007年）',
+                options: [
+                    '酸素運搬量が減少する。',
+                    '赤血球の寿命が短縮する。',
+                    '核酸の合成酵素が不足する。',
+                    '白血球の分化が抑制される。'
+                ],
+                answer: 1
+            },
+            {
+                text: '貧血の診断に用いられるのはどれか。 （第100回、2011年）',
+                options: [
+                    'ヘモグロビン濃度',
+                    '収縮期血圧',
+                    '血糖値',
+                    '尿酸値'
+                ],
+                answer: 1
+            },
+            {
+                text: 'エリスロポエチンの産生が高まるのはどれか。 （第97回、2008年）',
+                options: [
+                    '血圧の低下',
+                    '血糖値の低下',
+                    '腎機能の低下',
+                    '動脈血酸素分圧の低下'
+                ],
+                answer: 4
+            },
+            {
+                text: '貧血で正しいのはどれか。 （99回、2010年）',
+                options: [
+                    '再生不良性貧血では易感染性がみられる。',
+                    '溶血性貧血では直接ビリルビンが増加する。',
+                    '鉄欠乏性貧血では血清フェリチンが増加する。',
+                    '悪性貧血では通常赤血球以外の血球系は保たれる。'
+                ],
+                answer: 1
+            },
+            {
+                text: 'ループ利尿薬について正しいのはどれか。 （第110回、2021年）',
+                options: [
+                    '作用発現が速い。',
+                    '眠前の服用が望ましい。',
+                    '抗不整脈薬として用いられる。',
+                    '副作用〈有害事象〉に高カリウム血症がある。'
+                ],
+                answer: 1
+            },
+            {
+                text: 'ループ系利尿薬とジギタリス製剤を服用している。 最も注意すべき血液検査項目はどれか。 （第95回、2006年）',
+                options: [
+                    'カリウム値',
+                    'カルシウム値',
+                    'ビリルビン値',
+                    'クレアチニン値'
+                ],
+                answer: 1
+            },
+            {
+                text: '降圧利尿薬により血中濃度が低下するのはどれか。 （第103回、2014年）',
+                options: [
+                    'ナトリウム',
+                    '中性脂肪',
+                    '尿 酸',
+                    '血 糖'
+                ],
+                answer: 1
+            },
+            {
+                text: '・降圧薬の作用機序で正しいのはどれか。 （第91回、2002年） a. アンジオテンシン変換酵素阻害薬 ― 昇圧物質合成阻害 b. 利尿薬 ― 循環血漿量減少 c. β受容体遮断薬 ― 末梢血管拡張 d. カルシウム拮抗薬 ― 心拍出量減少',
+                options: [
+                    'a, b',
+                    'a, d',
+                    'b, c',
+                    'c, d'
+                ],
+                answer: 1
+            },
+            {
+                text: '・血圧を上昇させるのはどれか。2つ選べ。 （第110回、2021年）',
+                options: [
+                    'セロトニン',
+                    'ヒスタミン',
+                    'バソプレシン',
+                    'ブラジキニン',
+                    '心房性ナトリウム利尿ペプチド'
+                ],
+                answer: [1, 3]
+            },
+            {
+                text: '・シクロホスファミドを投与している患者で注意が必要なのはどれか。 （112回）',
+                options: [
+                    '緑内障',
+                    '間質性肺炎',
+                    '歯肉の肥厚',
+                    '出血性膀胱炎'
+                ],
+                answer: 4
+            },
+            {
+                text: '・癌性疼痛で硫酸モルヒネ徐放錠を1日2回（9時、21時）内服している患者が19時に痛みを訴えた。この時の対応で最も適切なのはどれか （第98回、2009年）',
+                options: [
+                    '睡眠導入薬の内服',
+                    '塩酸モルヒネ水の内服',
+                    'ペンタゾシンの筋肉内注射',
+                    '21時の硫酸モルヒネ徐放錠を早めに内服'
+                ],
+                answer: 2
+            },
+            {
+                text: '・嘔気・嘔吐が強く出現する抗悪性腫瘍薬はどれか。',
+                options: [
+                    'シスプラチン',
+                    'ブスルファン',
+                    'ブレオマイシン',
+                    'ビンクリスチン'
+                ],
+                answer: 1
+            },
+            {
+                text: '・抗癌薬による骨髄機能抑制症状はどれか。 （101回）',
+                options: [
+                    '嘔吐',
+                    '脱毛',
+                    '下痢',
+                    '歯肉出血'
+                ],
+                answer: 4
+            },
+            {
+                text: '・骨髄抑制が出現するのはどれか。 （96回）',
+                options: [
+                    '麻薬',
+                    '利尿薬',
+                    '抗癌薬',
+                    'インスリン製剤'
+                ],
+                answer: 3
+            },
+            {
+                text: '・非小細胞肺癌で化学療法を初めて受けた患者。治療開始10日目の血液データは赤血球300万/μL、Hb11.8g/dL、白血球1,000/μL、血小板12万/μL、クレアチニン1.0mg/dLであった。この時期に最も注意して観察するのはどれか。 （98回）',
+                options: [
+                    '色素沈着',
+                    '尿量減少',
+                    '感染徴候',
+                    '脱毛'
+                ],
+                answer: 3
+            },
+            {
+                text: '・抗癌薬の有害な作用で起こりやすいのはどれか。 （103回）',
+                options: [
+                    '嘔吐',
+                    '失禁',
+                    '高血糖',
+                    '光線過敏'
+                ],
+                answer: 1
+            },
+            {
+                text: '坐薬について適切なのはどれか。',
+                options: [
+                    '油脂性の坐薬は室温で保存する',
+                    '人工肛門への使用は無効である',
+                    '有効成分は直腸粘膜から直接吸収される',
+                    '成人では肛門から1cmのところまで挿入する'
+                ],
+                answer: 3
+            },
+            {
+                text: '一定レベルの血中濃度が最も長時間持続するのはどれか。',
+                options: [
+                    '坐薬',
+                    '舌下錠',
+                    '吸入薬',
+                    '全身用経皮吸収剤'
+                ],
+                answer: 4
+            },
+            {
+                text: 'がん（性）疼痛に対するフェンタニルパッチについて適切なのはどれか。',
+                options: [
+                    '冷蔵保存する',
+                    '毎回貼付場所を変える',
+                    '用量調節が容易である',
+                    '頓用でも使用が可能である'
+                ],
+                answer: 2
+            },
+            {
+                text: '薬とその副作用の組合せで正しいのはどれか。',
+                options: [
+                    '抗ヒスタミン薬 ― 難聴',
+                    'スルホニル尿素薬 ― 咳嗽',
+                    '中枢性麻薬性鎮咳薬 ― 便秘',
+                    'アミノグリコシド系薬 ― 骨粗鬆症'
+                ],
+                answer: 3
+            },
+            {
+                text: '中心静脈栄養法〈TPN〉で高カロリー輸液を用いる際に、起こりやすい合併症はどれか。',
+                options: [
+                    '高血圧',
+                    '高血糖',
+                    '末梢静脈炎',
+                    '正中神経麻痺'
+                ],
+                answer: 2
+            },
+            {
+                text: '輸液ポンプを50mL/時に設定し、500mLの輸液を午前10時から開始した。終了予定時刻はどれか。',
+                options: [
+                    '午後2時',
+                    '午後4時',
+                    '午後6時',
+                    '午後8時'
+                ],
+                answer: 4
+            },
+            {
+                text: '血漿の電解質組成を陽イオンと陰イオンに分けたグラフを示す。矢印で示すのはどれか。',
+                options: [
+                    'ナトリウムイオン',
+                    'カリウムイオン',
+                    'リン酸イオン',
+                    '塩化物イオン',
+                    '重炭酸イオン'
+                ],
+                answer: 5
+            },
+            {
+                text: '点滴静脈内注射1,800mL/日を行う。一般用輸液セット（20滴≒1mL）を使用した場合、1分間の滴下数はどれか。',
+                options: [
+                    '19滴',
+                    '25滴',
+                    '50滴',
+                    '75滴'
+                ],
+                answer: 2
+            },
+            {
+                text: '点滴静脈内注射で輸液ポンプを使用する際に設定する項目はどれか。',
+                options: [
+                    '薬剤名',
+                    '終了時間',
+                    '投与月日',
+                    '1時間あたりの流量'
+                ],
+                answer: 4
+            },
+            {
+                text: 'Aさん(17歳、高校生)。身長150cm、体重48kg。Aさんは最近、月経時に下腹部痛が繰り返し出現し、寝込むことが多くなった。心配した母親と一緒に、Aさんは産婦人科クリニックを受診し、医師から機能性月経困難症と診断された。既往歴に特記すべきことはない。Aさんの下腹部痛についての説明で適切なのはどれか。',
+                options: [
+                    'プロスタグランジンの過剰産生によって起こる。',
+                    '無排卵性の月経によって起こる。',
+                    '卵巣内のうっ血によって起こる。',
+                    '経血の流出によって起こる。'
+                ],
+                answer: 1
+            },
+            {
+                text: '非ステロイド性抗炎症薬で注意すべき有害作用はどれか。',
+                options: [
+                    '薬物依存',
+                    '無月経',
+                    '消化性潰瘍',
+                    '糖尿病'
+                ],
+                answer: 3
+            },
+            {
+                text: 'アンジオテンシンIIの作用はどれか。',
+                options: [
+                    '細動脈を収縮させる',
+                    '毛細血管を拡張させる',
+                    'レニン分泌を促進する',
+                    'アルドステロン分泌を抑制する'
+                ],
+                answer: 1
+            },
+            {
+                text: 'インドメタシン内服薬の禁忌はどれか。',
+                options: [
+                    '痛風',
+                    '膀胱炎',
+                    '消化性潰瘍',
+                    '関節リウマチ'
+                ],
+                answer: 3
+            },
+            {
+                text: 'ループ系利尿薬とジギタリス製剤を服用している。最も注意すべき血液検査項目はどれか。',
+                options: [
+                    'カリウム値',
+                    'カルシウム値',
+                    'ビリルビン値',
+                    'クレアチニン値'
+                ],
+                answer: 1
+            },
+            {
+                text: '76歳の男性。検査入院したが不眠のため睡眠薬の内服を開始した。最も注意すべき状態はどれか。',
+                options: [
+                    '口喝',
+                    '排尿困難',
+                    '食欲不振',
+                    '転倒・転落'
+                ],
+                answer: 4
+            },
+            {
+                text: 'ベンゾジアゼピン系薬物（抗不安薬）の離脱症状はどれか。',
+                options: [
+                    'a、b',
+                    'a、d',
+                    'b、c',
+                    'c、d'
+                ],
+                answer: 4
+            },
+            {
+                text: 'オランザピン（非定型抗精神病薬）内服中の患者で最も注意しなければならないのはどれか。',
+                options: [
+                    '高血圧',
+                    '高血糖',
+                    '抗尿酸血症',
+                    '抗アンモニア血症',
+                    '抗ナトリウム血症'
+                ],
+                answer: 2
+            },
+            {
+                text: 'Aさん(21歳、男性)は、統合失調症と診断され、入院してハロペリドールの投与が開始された。入院後3日、39.5℃の急激な発熱、発汗、筋固縮および意識障害を認めた。Aさんの状態で考えられるのはどれか。',
+                options: [
+                    '昏迷',
+                    '悪性症候群',
+                    'てんかん発作',
+                    '静座不能（アカシジア）'
+                ],
+                answer: 2
+            },
+            {
+                text: '統合失調症の幻覚や妄想に最も関係する神経伝達物質はどれか。',
+                options: [
+                    'ドパミン',
+                    'セロトニン',
+                    'アセチルコリン',
+                    'ノルアドレナリン'
+                ],
+                answer: 1
+            },
+            {
+                text: 'てんかんについて正しいのはどれか。2つ選べ。',
+                options: [
+                    'けいれんと同義である。',
+                    '症候性てんかんは脳内病変を伴う。',
+                    '単純部分発作では意識障害を認める。',
+                    '特発性の全般てんかんは高齢者に多い。',
+                    '脳の神経細胞の発作性電気的興奮によって起こる。'
+                ],
+                answer: [2, 5]
+            },
+            {
+                text: '次の文を読み問いに答えよ。Aさん(75歳、男性)は妻(75)と2人暮らしで、15年前にParkinson（パーキンソン）病と診断された。7年前よりレボドパ（L-dopa）を1日3回内服している。Hoehn & Yahr（ホーエン・ヤール）重症度分類のステージIVで、要介護2である。妻は腰痛のため毎日リハビリテーション目的で通院中である。妻の介護負担を軽減するため、Aさんは毎月10日間、介護老人保健施設の短期入所（ショートステイ）を利用している。今回は妻の腰痛が増強したため、Aさんは予定を早めて入所した。Aさんは握力が低下しているが、スプーンを使用し自力で食事を摂取している。食事中に姿勢が崩れることが多く、むせや食べこぼしがある。',
+                options: [
+                    '（設問は次の問題に記載）'
+                ],
+                answer: null
+            },
+            {
+                text: 'Aさんは社交的で短期入所中はいつも介護老人保健施設の利用者や職員と笑顔で会話していたが、今回は、会話中に急に表情がなくなり声が聞きとれないほど小さくなったり、手足の震えが出現することがあった。食後に薬を内服すると症状は改善するが、内服して時間後には同じような症状が現れることがあった。Aさんの症状はどれか。',
+                options: [
+                    'オンオフ現象',
+                    'ジスキネジア',
+                    'アナフィラキシー反応',
+                    'ウェアリングオフ現象'
+                ],
+                answer: 4
+            },
+            {
+                text: '75歳の女性。パーキンソン病と診断され、レボドパと抗コリン薬とが投与されている。最近、尿意はあるが尿が出にくく、気が付くと尿が漏れているという。対応で正しいのはどれか。2つ選べ。',
+                options: [
+                    '残尿量を調べる。',
+                    '定期的な排尿誘導を行う。',
+                    '骨盤底筋運動の指導をする。',
+                    '抗コリン薬の服薬状況を確認する。',
+                    '2,000mL/日以上の水分摂取を勧める。'
+                ],
+                answer: [1, 4]
+            },
+            {
+                text: 'Aさん（46歳、男性）は、肺癌の腰椎転移で治療中である。モルヒネ徐放錠20mgを1日2回（午前9時、午後9時）とアセトアミノフェン500mgを1日3回（毎食後）内服して痛みをコントロールしていたが、急激な痛みが出現した。この時点のAさんへのレスキューとして用いられるのはどれか。',
+                options: [
+                    'モルヒネ徐放錠',
+                    'モルヒネ速効性薬',
+                    'アセトアミノフェン',
+                    '非ステロイド系消炎鎮痛薬'
+                ],
+                answer: 2
+            },
+            {
+                text: 'モルヒネの副作用（有害事象）はどれか。',
+                options: [
+                    '出血',
+                    '便秘',
+                    '高血圧',
+                    '粘膜障害'
+                ],
+                answer: 2
+            },
+            {
+                text: 'モルヒネによる急性中毒の症状・徴候はどれか。',
+                options: [
+                    '散瞳',
+                    '胸痛',
+                    '低血糖',
+                    '呼吸抑制'
+                ],
+                answer: 4
+            },
+            {
+                text: '三環系抗うつ薬の副作用はどれか。',
+                options: [
+                    '高血圧',
+                    '尿閉',
+                    '下痢',
+                    '徐脈'
+                ],
+                answer: 2
+            },
+            {
+                text: '薬物血中濃度モニタリング〈TDM〉の実施が必要な薬物はどれか。2つ選べ。',
+                options: [
+                    'ヘパリン',
+                    'インスリン',
+                    'ジギタリス',
+                    '炭酸リチウム',
+                    'ニトログリセリン'
+                ],
+                answer: [3, 4]
+            },
+            {
+                text: 'うつ病患者がSSRI（選択的セロトニン再取り込み阻害薬）の服用を開始した。観察が必要な症状はどれか。',
+                options: [
+                    '掻痒感',
+                    '嘔気',
+                    '口唇の不随意運動',
+                    '徐脈'
+                ],
+                answer: 2
+            },
+            {
+                text: '次の文を読み問題に答えよ。Aさん(78歳、男性)は、尿路感染症による敗血症で入院し、5日が経過した。中心静脈ラインから輸液ポンプを使用して乳酸リンゲル液が投与され、その側管からシリンジポンプを使用してノルアドレナリンが投与されている。その直後、看護師はノルアドレナリンの投与量を医師の指示書で確認した。指示書には、午前6時に2mL/時間から1mL/時間へ投与量の減量の指示が記載されていたが、午前9時の投与量は2mL/時間のままであったことに気が付いた。このときのAさんに対し看護師がアセスメントする項目で優先度が高いのはどれか。',
+                options: [
+                    '血圧',
+                    '尿量',
+                    '血糖値',
+                    '呼吸数'
+                ],
+                answer: 1
+            },
+            {
+                text: 'アセチルコリンで収縮するのはどれか。2つ選べ。',
+                options: [
+                    '心筋',
+                    '排尿筋',
+                    '腓腹筋',
+                    '立毛筋',
+                    '瞳孔散大筋'
+                ],
+                answer: [2, 3]
+            },
+            {
+                text: '麻酔前投薬で気管支粘膜からの分泌抑制を目的に使用するのはどれか。',
+                options: [
+                    'モルヒネ',
+                    'アトロピン',
+                    'ジアゼパム',
+                    'ペンタゾシン'
+                ],
+                answer: 2
+            },
+            {
+                text: 'Aさん(34歳、初産婦)。陣痛発来して、産婦人科に入院した。Aさんは無痛分娩を希望し、硬膜外カテーテルから局所麻酔薬が投与された。その3分後に、Aさんは手のしびれと気分不快を訴えた。頸部に氷を当てたところAさんはあまり冷たくないという。この時点で直ちに準備するもので優先度が高いのはどれか。',
+                options: [
+                    '降圧薬',
+                    '輸血用器材',
+                    '吸入ステロイド薬',
+                    '気管挿管のための器材',
+                    '自動体外式除細動器〈AED〉'
+                ],
+                answer: 4
+            },
+            {
+                text: '65歳の男性のAさんは上部消化管の内視鏡検査を受ける際、抗コリン薬を投与された。看護師がAさんに行う説明で適切なのはどれか。',
+                options: [
+                    '検査直後から自動車を運転して帰宅できる',
+                    '検査終了後の半日は飲食を禁止する',
+                    '排尿困難を生じる可能性がある',
+                    '腹痛が強くても下血がなければ様子を見る'
+                ],
+                answer: 3
+            },
+            {
+                text: '抗コリン薬の投与が禁忌の疾患はどれか。2つ選べ。',
+                options: [
+                    '疥癬',
+                    '緑内障',
+                    '大腿骨骨折',
+                    '前立腺肥大症',
+                    '前頭側頭型認知症'
+                ],
+                answer: [2, 4]
+            },
+            {
+                text: '選択的セロトニン再取り込み阻害薬（SSRI）について正しいのはどれか。',
+                options: [
+                    'パニック障害に対する効果はない',
+                    '抗コリン作用は三環系抗うつ薬よりも弱い',
+                    'うつ状態が改善したら直ちに使用を中止する',
+                    '抗うつ効果の評価は投与開始後3日以内に行う'
+                ],
+                answer: 2
+            },
+            {
+                text: '選択的セロトニン再取り込み阻害薬（SSRI）について正しいのはどれか。',
+                options: [
+                    'パニック障害にして有効である',
+                    '抗コリン作用は三環系抗うつ薬よりも強い',
+                    'うつ状態が改善したら直ちに使用を中止する',
+                    '抗うつ効果の評価は投与開始後3日以内に行う'
+                ],
+                answer: 1
+            },
+            {
+                text: '入院時イソプロテレノール（β刺激薬）が投与された。患者に説明する内容として最も適切なのはどれか。',
+                options: [
+                    '「熱が上がることがあります」',
+                    '「ドキドキするようなら教えてください」',
+                    '「排尿しづらくなったら教えてください」',
+                    '「物が二重に見えるので気を付けてください」'
+                ],
+                answer: 2
+            },
+            {
+                text: '散瞳薬を用いて眼底検査を受ける成人患者への対応で適切なのはどれか。',
+                options: [
+                    '検査中は室内を明るくする',
+                    '散瞳薬の点眼は検査直前に行う',
+                    '検査前に緑内障の有無を確認する',
+                    '検査後1時間で自動車の運転が可能になると説明する'
+                ],
+                answer: 3
+            },
+            {
+                text: '36歳の妊婦。妊娠35週5日。切迫早産で入院となった。ベッド上安静で子宮収縮抑制薬（リトドリン塩酸塩）の持続点滴静脈内注射が開始となった。入院時、血圧118/84 mmHg。尿蛋白（±）、尿糖（−）。Hb 11.5g/dL、Ht 34%。入院中、最も起こりやすいのはどれか。',
+                options: [
+                    '徐脈',
+                    '貧血',
+                    '便秘',
+                    '浮腫'
+                ],
+                answer: 3
+            },
+            {
+                text: '緑内障患者への投与が禁忌なのはどれか。',
+                options: [
+                    'コデイン',
+                    'アスピリン',
+                    'アトロピン',
+                    'ジギキシン',
+                    'フェニトイン'
+                ],
+                answer: 3
+            },
+            {
+                text: '勃起不全治療薬の使用禁忌はどれか。',
+                options: [
+                    'ビタミンB6',
+                    '硫酸マグネシウム',
+                    'ニトログリセリン',
+                    '炭酸水素ナトリウム'
+                ],
+                answer: 3
+            },
+            {
+                text: '注射部位の皮膚をつまみ上げて実施するのはどれか。',
+                options: [
+                    '皮内注射',
+                    '皮下注射',
+                    '筋肉内注射',
+                    '静脈内注射'
+                ],
+                answer: 2
+            },
+            {
+                text: '注射針を皮膚に対して45〜90度の角度で刺入するのはどれか。',
+                options: [
+                    '皮内注射',
+                    '皮下注射',
+                    '筋肉内注射',
+                    '静脈内注射'
+                ],
+                answer: 3
+            },
+            {
+                text: '中心静脈から投与しなければならないのはどれか。',
+                options: [
+                    '脂肪乳剤',
+                    '生理食塩液',
+                    '5％ブドウ糖液',
+                    '高カロリー輸液'
+                ],
+                answer: 4
+            },
+            {
+                text: '交感神経の作用はどれか。2つ選べ。',
+                options: [
+                    '散瞳',
+                    '精神性発汗',
+                    '腸蠕動の促進',
+                    '排尿筋の収縮',
+                    'グリコーゲン合成の促進'
+                ],
+                answer: [1, 2]
+            },
+            {
+                text: '医薬品に関する禁忌を示すことが定められているのはどれか。',
+                options: [
+                    '処方箋',
+                    '診断書',
+                    '看護記録',
+                    '添付文書'
+                ],
+                answer: 4
+            },
+            {
+                text: '麻薬の取り扱いで正しいのはどれか。',
+                options: [
+                    '看護師は麻薬施用者免許を取得できる',
+                    '麻薬を廃棄したときは市町村長に届け出る',
+                    'アンプルの麻薬注射液は複数の患者に分割して用いる',
+                    '麻薬及び向精神薬取締法に管理について規定されている'
+                ],
+                answer: 4
+            },
+            {
+                text: '他の医薬品と区別して貯蔵し、鍵をかけた堅固な設備内に保管することが法律で定められているのはどれか。',
+                options: [
+                    'ヘパリン',
+                    'インスリン',
+                    'リドカイン',
+                    'フェンタニル'
+                ],
+                answer: 4
+            },
+            {
+                text: '毒薬の保管方法を規定している法律はどれか。',
+                options: [
+                    '薬剤師法',
+                    '毒物及び劇物取締法',
+                    '麻薬及び向精神薬取締法',
+                    '医薬品、医療機器等の品質、有効性及び安全性の確保等に関する法律（医薬品医療機器等法）'
+                ],
+                answer: 4
+            },
+            {
+                text: '薬物の効果発現が最も早いのはどれか。',
+                options: [
+                    '皮下注射',
+                    '経口与薬',
+                    '直腸内与薬',
+                    '静脈内注射'
+                ],
+                answer: 4
+            },
+            {
+                text: '成人への与薬方法で正しいのはどれか。',
+                options: [
+                    '筋肉内注射は大殿筋に行う',
+                    '坐薬は肛門から1cm挿入する',
+                    'バッカル錠は、かんでから飲み込む',
+                    '点眼薬は下眼瞼結膜の中央に滴下する'
+                ],
+                answer: 4
+            },
+            {
+                text: 'アナフィラキシーショックに対して最も即効性があるのはどれか。',
+                options: [
+                    '塩化カリウム',
+                    'テオフィリン',
+                    'アドレナリン',
+                    'プレドニゾロン',
+                    '硫酸マグネシウム'
+                ],
+                answer: 3
+            },
+            {
+                text: '点眼薬の投与について正しいのはどれか。',
+                options: [
+                    '点眼時は上眼瞼を上げる',
+                    '点眼容器の先端は眼瞼結膜に当てる',
+                    '点眼後は眼球を圧迫する',
+                    '眼から溢れた薬液は拭き取る'
+                ],
+                answer: 4
+            },
+            {
+                text: '成人への坐薬の挿入方法で正しいのはどれか。',
+                options: [
+                    '息を止めるよう説明する',
+                    '右側臥位になるよう説明する',
+                    '挿入後、1、2分肛門を押さえる',
+                    '肛門から2cmの位置に挿入する'
+                ],
+                answer: 3
+            },
+            {
+                text: '与薬の指示で食間はどれか。',
+                options: [
+                    '食事中',
+                    '食後30分',
+                    '食前30分',
+                    '食後120分'
+                ],
+                answer: 4
+            },
+            {
+                text: '与薬で誤っているのはどれか。',
+                options: [
+                    'カプセル薬は飲みにくくてもそのまま服用するよう説明する',
+                    '与薬時は患者に姓名を言ってもらい確認する',
+                    'アンプルは注射が終わるまで残しておく',
+                    '坐薬は体温程度に温めて挿入する'
+                ],
+                answer: 4
+            },
+            {
+                text: '薬物の吸収速度が最も速いのはどれか。',
+                options: [
+                    '経口投与',
+                    '筋肉内注射',
+                    '静脈内注射',
+                    '直腸内投与'
+                ],
+                answer: 3
+            },
+            {
+                text: '薬物血中濃度モニタリング〈TDM〉の実施が必要な薬物はどれか。2つ選べ。',
+                options: [
+                    'ヘパリン',
+                    'インスリン',
+                    'ジギタリス',
+                    '炭酸リチウム',
+                    'ニトログリセリン'
+                ],
+                answer: [3, 4]
+            },
+            {
+                text: '血中濃度を確認する必要性が最も高い医薬品はどれか。',
+                options: [
+                    'アスピリン',
+                    'フロセミド',
+                    'テオフィリン',
+                    'インドメタシン'
+                ],
+                answer: 3
+            },
+            {
+                text: '点眼指導で適切なのはどれか。',
+                options: [
+                    '油性と水性の薬剤を両方使うときは、油性の薬剤を先に点眼する',
+                    '容器の先端が睫毛に接したら点眼する',
+                    '点眼後は、乾燥するまでまばたきをしない',
+                    '点眼後は、ふき綿で涙嚢部を軽く圧迫する'
+                ],
+                answer: 4
+            },
+            {
+                text: '薬剤の血中濃度の上昇が最も早い投与方法はどれか。',
+                options: [
+                    '坐薬',
+                    '経口薬',
+                    '筋肉内注射',
+                    '静脈内注射'
+                ],
+                answer: 4
+            },
+            {
+                text: '皮下注射で適切なのはどれか。',
+                options: [
+                    '注射部位を伸展する',
+                    '注射針は18〜20Gを使用する',
+                    '針の刺入角度は45〜90度にする',
+                    '皮下脂肪が5mm以上の部位を選択する'
+                ],
+                answer: 4
+            },
+            {
+                text: '高齢者によく使用する薬と有害事象との組み合わせで適切なのはどれか。',
+                options: [
+                    'Ca拮抗薬　ー　尿失禁',
+                    '催眠薬　ー　ふらつき',
+                    '利尿薬　ー　視力低下',
+                    'β遮断薬　ー　錯乱状態'
+                ],
+                answer: 2
+            },
+            {
+                text: '経口薬と食品の関係について、正しいのはどれか。',
+                options: [
+                    'テトラサイクリン系抗菌薬は牛乳の摂取によって吸収が高まる',
+                    '非ステロイド性抗炎症薬は炭酸飲料によって吸収が早まる',
+                    '抗ヒスタミン薬はアルコールの摂取によって副作用（有害事象）が出現しやすくなる',
+                    'キサンチン系気管支拡張薬は、納豆の摂取によって副作用（有害事象）が出現しやすくなる'
+                ],
+                answer: 3
+            },
+            {
+                text: 'カルシウム拮抗薬の血中濃度を上げる食品はどれか。',
+                options: [
+                    '牛乳',
+                    '納豆',
+                    'ブロッコリー',
+                    'グレープフルーツ'
+                ],
+                answer: 4
+            },
+            {
+                text: '経口投与後の薬物が初回通過効果を受ける場所はどれか。',
+                options: [
+                    '胃',
+                    '肝臓',
+                    '小腸',
+                    '腎臓'
+                ],
+                answer: 2
+            },
+            {
+                text: '薬物動態で肝臓が関与するのはどれか。',
+                options: [
+                    '吸収',
+                    '分布',
+                    '代謝',
+                    '蓄積'
+                ],
+                answer: 3
+            },
+            {
+                text: '有害物質を無毒化し排泄する臓器はどれか。',
+                options: [
+                    '胃',
+                    '肝臓',
+                    '膵臓',
+                    '大腸'
+                ],
+                answer: 2
+            },
+            {
+                text: '薬物の分解、排泄の速さの指標となるのはどれか。',
+                options: [
+                    '最高血中濃度',
+                    '生物学的半減期',
+                    '濃度曲線下面積',
+                    '最高血中濃度到達時間'
+                ],
+                answer: 2
+            },
+            {
+                text: '老化による身体機能の変化と薬物動態への影響との組合せで正しいのはどれか。',
+                options: [
+                    '血中蛋白の低下　ー　薬効の減少',
+                    '腎血流量の低下　ー　薬効の減少',
+                    '肝血流量の低下　ー　薬効の増大',
+                    '消化機能の低下　ー　薬効の増大'
+                ],
+                answer: 3
+            },
+            {
+                text: '加齢による身体生理機能の変化とそれによって影響を受ける薬物動態の組合せで正しいのはどれか。',
+                options: [
+                    '体内水分量の減少　ー　代謝',
+                    '体内脂肪量の増加　ー　排泄',
+                    '血清アルブミンの減少　ー　分布',
+                    '糸球体濾過値（GFR）の低下　ー　吸収'
+                ],
+                answer: 3
+            },
+            {
+                text: '次の向精神薬のうち第1種に該当するものを選びなさい。',
+                options: [
+                    'メチルフェニデート（コンサータ®錠：中枢神経刺激）',
+                    'ブプレノルフィン（レペタン®注：鎮痛）',
+                    'セコバルビタール（注射用アイオナールナトリウム®：催眠・鎮静）',
+                    'アモバルビタール（イソミタール®原末：催眠・鎮静）',
+                    'ペモリン（ベタナミン®錠：中枢神経刺激）'
+                ],
+                answer: [1, 3]
+            },
+            {
+                text: '次のアルツハイマー型認知症の治療薬のうち、神経毒性を有するアミロイドBを除去するものはどれか。',
+                options: [
+                    'レカネマブ',
+                    'ドネペジル',
+                    'メマンチン',
+                    'ガランタミン'
+                ],
+                answer: 1
+            }
+        ];
+
+        // クイズの初期化
+        const quiz = new Quiz(questionsData);
+    </script>
+</body>
+</html>
